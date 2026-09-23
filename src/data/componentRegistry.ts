@@ -9,6 +9,10 @@ import { RetroPanel } from '../components/retro/RetroPanel';
 import { VintageAudioConsole } from '../components/retro/VintageAudioConsole';
 import { CockpitControlPanel } from '../components/retro/CockpitControlPanel';
 import { SkeuomorphicMediaBar } from '../components/retro/SkeuomorphicMediaBar';
+import { MediaTransportButton } from '../components/retro/MediaTransportButton';
+import { AnalogFaderSlider } from '../components/retro/AnalogFaderSlider';
+import { SpeakerGrille } from '../components/retro/SpeakerGrille';
+import { VerticalGearbox } from '../components/retro/VerticalGearbox';
 import { Sparkles } from 'lucide-react';
 
 export const COMPONENT_REGISTRY: UIComponentItem[] = [
@@ -58,10 +62,221 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
     ),
   },
   {
+    id: 'vertical-gearbox',
+    name: 'Vertical Gearbox Lever',
+    category: 'Buttons & Controls',
+    description: 'Tactile mechanical vertical gearbox control where users shift a lever along a vertical metallic track with detent clicks into gear positions (e.g. 1, 2, 3, 4, 5, R).',
+    tags: ['gearbox', 'gear', 'lever', 'transmission', 'shift', 'vertical', 'tactile', 'retro'],
+    defaultProps: {
+      label: 'TRANSMISSION GEARS',
+      variant: 'machined-steel',
+      defaultPosition: 0,
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'TRANSMISSION GEARS',
+        description: 'Header text displayed above gearbox casing',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'machined-steel',
+        options: ['machined-steel', 'dark-tactile', 'gold-vintage'],
+        description: 'Material finish of gearbox casing and lever knob',
+      },
+      {
+        name: 'defaultPosition',
+        type: 'number',
+        defaultValue: 0,
+        description: 'Initial active gear position index',
+      },
+    ],
+    codeSnippet: `<VerticalGearbox
+  label="TRANSMISSION GEARS"
+  positions={['1', '2', '3', '4', '5', 'R']}
+  variant="machined-steel"
+  defaultPosition={0}
+/>`,
+    component: (props: any) => React.createElement(
+      VerticalGearbox,
+      {
+        label: props.label || 'TRANSMISSION GEARS',
+        variant: props.variant || 'machined-steel',
+        defaultPosition: props.defaultPosition || 0,
+        positions: ['1', '2', '3', '4', '5', 'R'],
+      }
+    ),
+  },
+  {
+    id: 'media-transport-button',
+    name: 'Media Transport Button',
+    category: 'Buttons & Controls',
+    description: 'Standalone sunken molded transport button (play, pause, stop, rewind, record, power) with metallic finish and LED indicators.',
+    tags: ['media', 'transport', 'button', 'play', 'pause', 'stop', 'radio', 'skeuomorphic'],
+    defaultProps: {
+      type: 'play',
+      variant: 'metallic',
+      label: 'PLAY',
+      isActive: false,
+      ledColor: 'emerald',
+    },
+    propsSchema: [
+      {
+        name: 'type',
+        type: 'select',
+        defaultValue: 'play',
+        options: ['play', 'pause', 'stop', 'rewind', 'fastforward', 'record', 'power', 'custom'],
+        description: 'Transport control action type & icon',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'metallic',
+        options: ['metallic', 'dark-plastic', 'amber-glow', 'emerald-glow'],
+        description: 'Button finish scheme',
+      },
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'PLAY',
+        description: 'Button text label',
+      },
+      {
+        name: 'isActive',
+        type: 'boolean',
+        defaultValue: false,
+        description: 'Active toggled state',
+      },
+      {
+        name: 'ledColor',
+        type: 'select',
+        defaultValue: 'emerald',
+        options: ['emerald', 'amber', 'red', 'cyan'],
+        description: 'Status LED backlight color',
+      },
+    ],
+    codeSnippet: `<MediaTransportButton type="play" variant="metallic" label="PLAY" ledColor="emerald" />`,
+    component: (props: any) => React.createElement(
+      MediaTransportButton,
+      {
+        type: props.type || 'play',
+        variant: props.variant || 'metallic',
+        label: props.label || 'PLAY',
+        isActive: props.isActive !== undefined ? props.isActive : false,
+        ledColor: props.ledColor || 'emerald',
+      }
+    ),
+  },
+  {
+    id: 'analog-fader-slider',
+    name: 'Analog Fader Slider',
+    category: 'Buttons & Controls',
+    description: 'Tactile vertical/horizontal fader slider with extruded metallic thumb cap, sunken track groove, and scale tick markings.',
+    tags: ['fader', 'slider', 'volume', 'analog', 'equalizer', 'tactile', 'skeuomorphic'],
+    defaultProps: {
+      label: 'VOLUME',
+      orientation: 'vertical',
+      variant: 'brushed-silver',
+      defaultValue: 65,
+      unit: '%',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'VOLUME',
+        description: 'Header title text',
+      },
+      {
+        name: 'orientation',
+        type: 'select',
+        defaultValue: 'vertical',
+        options: ['vertical', 'horizontal'],
+        description: 'Slider track axis',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'brushed-silver',
+        options: ['brushed-silver', 'dark-tactile', 'gold-vintage'],
+        description: 'Thumb cap finish style',
+      },
+      {
+        name: 'defaultValue',
+        type: 'number',
+        defaultValue: 65,
+        description: 'Default percentage value (0 to 100)',
+      },
+    ],
+    codeSnippet: `<AnalogFaderSlider label="VOLUME" orientation="vertical" variant="brushed-silver" defaultValue={65} />`,
+    component: (props: any) => React.createElement(
+      AnalogFaderSlider,
+      {
+        label: props.label || 'VOLUME',
+        orientation: props.orientation || 'vertical',
+        variant: props.variant || 'brushed-silver',
+        defaultValue: props.defaultValue !== undefined ? props.defaultValue : 65,
+      }
+    ),
+  },
+  {
+    id: 'speaker-grille',
+    name: 'Speaker Mesh Vent Grille',
+    category: 'Cards & Containers',
+    description: 'Skeuomorphic audio mesh vent panel plate with customizable hole matrix patterns, metallic finish, and logo plate.',
+    tags: ['speaker', 'grille', 'mesh', 'vent', 'audio', 'radio', 'plate', 'skeuomorphic'],
+    defaultProps: {
+      label: 'HI-FI SPEAKER MESH',
+      pattern: 'mesh-dots',
+      variant: 'brushed-chrome',
+      logoText: 'HI-FI AUDIO',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'HI-FI SPEAKER MESH',
+        description: 'Header text above speaker frame',
+      },
+      {
+        name: 'pattern',
+        type: 'select',
+        defaultValue: 'mesh-dots',
+        options: ['mesh-dots', 'slotted-vents', 'honeycomb', 'vintage-woven'],
+        description: 'Hole/mesh vent pattern style',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'brushed-chrome',
+        options: ['brushed-chrome', 'dark-brass', 'black-satin', 'silver-matte'],
+        description: 'Outer bezel metal finish',
+      },
+      {
+        name: 'logoText',
+        type: 'string',
+        defaultValue: 'HI-FI AUDIO',
+        description: 'Text on center brand badge plate',
+      },
+    ],
+    codeSnippet: `<SpeakerGrille label="HI-FI SPEAKER MESH" pattern="mesh-dots" variant="brushed-chrome" logoText="HI-FI AUDIO" />`,
+    component: (props: any) => React.createElement(
+      SpeakerGrille,
+      {
+        label: props.label || 'HI-FI SPEAKER MESH',
+        pattern: props.pattern || 'mesh-dots',
+        variant: props.variant || 'brushed-chrome',
+        logoText: props.logoText || 'HI-FI AUDIO',
+      }
+    ),
+  },
+  {
     id: 'retro-panel',
     name: 'Retro 3D Irregular Panel Plate',
     category: 'Cards & Containers',
-    description: '3D extruded industrial panel plate with organic curves, swoops, irregular polygon cuts, bevel edges, molded sockets, corner rivets, and technical backdrop patterns for hosting controls.',
+    description: '3D extruded industrial panel plate supporting multi-cut corner/edge configurations, organic curves, swoops, bevel edges, molded sockets, corner rivets, and technical backdrop patterns.',
     tags: ['panel', 'card', '3d', 'irregular', 'cut', 'curves', 'swoop', 'retro', 'container', 'plate'],
     defaultProps: {
       title: 'RADAR AVIONICS PLATE',
@@ -106,7 +321,7 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
           'molded-pod',
           'wave-top',
         ],
-        description: 'Silhouette shape (straight cut or organic swooping curves)',
+        description: 'Preset silhouette shape (straight cut or organic swooping curves)',
       },
       {
         name: 'variant',

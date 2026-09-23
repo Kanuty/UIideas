@@ -14,6 +14,25 @@ export type PanelShape =
   | 'molded-pod'
   | 'wave-top';
 
+export type CutLocation =
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right'
+  | 'top-edge'
+  | 'bottom-edge'
+  | 'left-edge'
+  | 'right-edge';
+
+export type CutType = 'harsh' | 'clean' | 'curved' | 'wave';
+export type CutSize = 'small' | 'medium' | 'large';
+
+export interface CutoutConfig {
+  location: CutLocation;
+  type?: CutType;
+  size?: CutSize;
+}
+
 export type PanelVariant =
   | 'dark-steel'
   | 'military-green'
@@ -26,22 +45,193 @@ export interface RetroPanelProps {
   title?: string;
   panelId?: string;
   shape?: PanelShape;
+  cuts?: CutoutConfig[];
   variant?: PanelVariant;
   children?: React.ReactNode;
   className?: string;
   showRivets?: boolean;
   showGridPattern?: boolean;
   isTransparent?: boolean;
-  glassOpacity?: number; // e.g. 0.1 for 90% transparency
+  glassOpacity?: number; // e.g. 0.15
   windowLabel?: string;
   showGlassReflection?: boolean;
   recessedSockets?: boolean;
+}
+
+/** Helper to generate dynamic SVG path data in 0..1 scale and 0..100 scale for multi-cut combinations */
+function buildCompositePaths(cuts: CutoutConfig[]): { path: string; viewBoxPath: string } {
+  const getCutOffset = (size: CutSize = 'medium') => {
+    switch (size) {
+      case 'small':
+        return 0.12;
+      case 'large':
+        return 0.32;
+      case 'medium':
+      default:
+        return 0.22;
+    }
+  };
+
+  const cutsByLoc = cuts.reduce<Record<string, CutoutConfig>>((acc, c) => {
+    acc[c.location] = c;
+    return acc;
+  }, {});
+
+  // Points along the perimeter starting top-left corner
+  let p1Path = '';
+  let p1VB = '';
+
+  // 1. Top-left corner
+  if (cutsByLoc['top-left']) {
+    const c = cutsByLoc['top-left'];
+    const d = getCutOffset(c.size);
+    const type = c.type || 'clean';
+    if (type === 'curved') {
+      p1Path += `M 0,${d} C 0,${d * 0.4} ${d * 0.4},0 ${d},0 `;
+      p1VB += `M 0,${d * 100} C 0,${d * 40} ${d * 40},0 ${d * 100},0 `;
+    } else if (type === 'wave') {
+      p1Path += `M 0,${d} C ${d * 0.5},${d * 1.2} ${d * 0.5},${-d * 0.2} ${d},0 `;
+      p1VB += `M 0,${d * 100} C ${d * 50},${d * 120} ${d * 50},${-d * 20} ${d * 100},0 `;
+    } else {
+      // clean or harsh
+      p1Path += `M 0,${d} L ${d},0 `;
+      p1VB += `M 0,${d * 100} L ${d * 100},0 `;
+    }
+  } else {
+    p1Path += `M 0,0 `;
+    p1VB += `M 0,0 `;
+  }
+
+  // 2. Top Edge Notch
+  if (cutsByLoc['top-edge']) {
+    const c = cutsByLoc['top-edge'];
+    const d = getCutOffset(c.size);
+    const type = c.type || 'curved';
+    if (type === 'curved' || type === 'clean') {
+      p1Path += `L 0.35,0 C 0.42,${d} 0.58,${d} 0.65,0 `;
+      p1VB += `L 35,0 C 42,${d * 100} 58,${d * 100} 65,0 `;
+    } else if (type === 'harsh') {
+      p1Path += `L 0.38,0 L 0.42,${d} L 0.58,${d} L 0.62,0 `;
+      p1VB += `L 38,0 L 42,${d * 100} L 58,${d * 100} L 62,0 `;
+    } else {
+      p1Path += `L 0.30,0 C 0.45,${d * 1.2} 0.55,${-d * 0.5} 0.70,0 `;
+      p1VB += `L 30,0 C 45,${d * 120} 55,${-d * 50} 70,0 `;
+    }
+  }
+
+  // 3. Top-right corner
+  if (cutsByLoc['top-right']) {
+    const c = cutsByLoc['top-right'];
+    const d = getCutOffset(c.size);
+    const type = c.type || 'clean';
+    if (type === 'curved') {
+      p1Path += `L ${1 - d},0 C ${1 - d * 0.4},0 1,${d * 0.4} 1,${d} `;
+      p1VB += `L ${100 - d * 100},0 C ${100 - d * 40},0 100,${d * 40} 100,${d * 100} `;
+    } else if (type === 'wave') {
+      p1Path += `L ${1 - d},0 C ${1 - d * 0.5},${d * 1.2} ${1 + d * 0.2},${d * 0.5} 1,${d} `;
+      p1VB += `L ${100 - d * 100},0 C ${100 - d * 50},${d * 120} ${100 + d * 20},${d * 50} 100,${d * 100} `;
+    } else {
+      p1Path += `L ${1 - d},0 L 1,${d} `;
+      p1VB += `L ${100 - d * 100},0 L 100,${d * 100} `;
+    }
+  } else {
+    p1Path += `L 1,0 `;
+    p1VB += `L 100,0 `;
+  }
+
+  // 4. Right Edge Notch
+  if (cutsByLoc['right-edge']) {
+    const c = cutsByLoc['right-edge'];
+    const d = getCutOffset(c.size);
+    const type = c.type || 'curved';
+    if (type === 'curved' || type === 'clean') {
+      p1Path += `L 1,0.35 C ${1 - d},0.42 ${1 - d},0.58 1,0.65 `;
+      p1VB += `L 100,35 C ${100 - d * 100},42 ${100 - d * 100},58 100,65 `;
+    } else {
+      p1Path += `L 1,0.38 L ${1 - d},0.42 L ${1 - d},0.58 L 1,0.62 `;
+      p1VB += `L 100,38 L ${100 - d * 100},42 L ${100 - d * 100},58 L 100,62 `;
+    }
+  }
+
+  // 5. Bottom-right corner
+  if (cutsByLoc['bottom-right']) {
+    const c = cutsByLoc['bottom-right'];
+    const d = getCutOffset(c.size);
+    const type = c.type || 'clean';
+    if (type === 'curved') {
+      p1Path += `L 1,${1 - d} C 1,${1 - d * 0.4} ${1 - d * 0.4},1 ${1 - d},1 `;
+      p1VB += `L 100,${100 - d * 100} C 100,${100 - d * 40} ${100 - d * 40},100 ${100 - d * 100},100 `;
+    } else if (type === 'wave') {
+      p1Path += `L 1,${1 - d} C ${1 - d * 1.2},${1 - d * 0.5} ${1 - d * 0.5},${1 + d * 0.2} ${1 - d},1 `;
+      p1VB += `L 100,${100 - d * 100} C ${100 - d * 120},${100 - d * 50} ${100 - d * 50},${100 + d * 20} ${100 - d * 100},100 `;
+    } else {
+      p1Path += `L 1,${1 - d} L ${1 - d},1 `;
+      p1VB += `L 100,${100 - d * 100} L ${100 - d * 100},100 `;
+    }
+  } else {
+    p1Path += `L 1,1 `;
+    p1VB += `L 100,100 `;
+  }
+
+  // 6. Bottom Edge Notch
+  if (cutsByLoc['bottom-edge']) {
+    const c = cutsByLoc['bottom-edge'];
+    const d = getCutOffset(c.size);
+    const type = c.type || 'curved';
+    if (type === 'curved' || type === 'clean') {
+      p1Path += `L 0.65,1 C 0.58,${1 - d} 0.42,${1 - d} 0.35,1 `;
+      p1VB += `L 65,100 C 58,${100 - d * 100} 42,${100 - d * 100} 35,100 `;
+    } else {
+      p1Path += `L 0.62,1 L 0.58,${1 - d} L 0.42,${1 - d} L 0.38,1 `;
+      p1VB += `L 62,100 L 58,${100 - d * 100} L 42,${100 - d * 100} L 38,100 `;
+    }
+  }
+
+  // 7. Bottom-left corner
+  if (cutsByLoc['bottom-left']) {
+    const c = cutsByLoc['bottom-left'];
+    const d = getCutOffset(c.size);
+    const type = c.type || 'clean';
+    if (type === 'curved') {
+      p1Path += `L ${d},1 C ${d * 0.4},1 0,${1 - d * 0.4} 0,${1 - d} `;
+      p1VB += `L ${d * 100},100 C ${d * 40},100 0,${100 - d * 40} 0,${100 - d * 100} `;
+    } else if (type === 'wave') {
+      p1Path += `L ${d},1 C ${d * 0.5},${1 - d * 1.2} ${-d * 0.2},${1 - d * 0.5} 0,${1 - d} `;
+      p1VB += `L ${d * 100},100 C ${d * 50},${100 - d * 120} ${-d * 20},${100 - d * 50} 0,${100 - d * 100} `;
+    } else {
+      p1Path += `L ${d},1 L 0,${1 - d} `;
+      p1VB += `L ${d * 100},100 L 0,${100 - d * 100} `;
+    }
+  } else {
+    p1Path += `L 0,1 `;
+    p1VB += `L 0,100 `;
+  }
+
+  // 8. Left Edge Notch
+  if (cutsByLoc['left-edge']) {
+    const c = cutsByLoc['left-edge'];
+    const d = getCutOffset(c.size);
+    const type = c.type || 'curved';
+    if (type === 'curved' || type === 'clean') {
+      p1Path += `L 0,0.65 C ${d},0.58 ${d},0.42 0,0.35 `;
+      p1VB += `L 0,65 C ${d * 100},58 ${d * 100},42 0,35 `;
+    } else {
+      p1Path += `L 0,0.62 L ${d},0.58 L ${d},0.42 L 0,0.38 `;
+      p1VB += `L 0,62 L ${d * 100},58 L ${d * 100},42 L 0,38 `;
+    }
+  }
+
+  p1Path += 'Z';
+  p1VB += 'Z';
+
+  return { path: p1Path, viewBoxPath: p1VB };
 }
 
 export const RetroPanel: React.FC<RetroPanelProps> = ({
   title,
   panelId,
   shape = 'cut-top-right',
+  cuts,
   variant = 'dark-steel',
   children,
   className = '',
@@ -56,7 +246,7 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
   const panelInstanceId = React.useId().replace(/:/g, '_');
   const clipId = `panel-clip-${panelInstanceId}`;
 
-  // Shape definitions with SVG path data in objectBoundingBox (0..1) space and viewBox (0..100) space
+  // Predefined shapes fallback
   const shapeConfigs: Record<
     PanelShape,
     { path: string; viewBoxPath: string; innerPadding: string }
@@ -123,6 +313,12 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
     },
   };
 
+  const activePaths = cuts && cuts.length > 0
+    ? buildCompositePaths(cuts)
+    : shapeConfigs[shape];
+
+  const innerPadding = cuts && cuts.length > 0 ? 'p-6' : shapeConfigs[shape].innerPadding;
+
   const variantStyles: Record<
     PanelVariant,
     {
@@ -137,8 +333,8 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
   > = {
     'dark-steel': {
       plate: 'bg-gradient-to-b from-stone-900 via-stone-950 to-black',
-      strokeOuter: '#44403c', // stone-700
-      strokeInner: '#a8a29e', // stone-400
+      strokeOuter: '#44403c',
+      strokeInner: '#a8a29e',
       text: 'text-amber-300',
       accent: 'bg-amber-400',
       shadow: 'shadow-[0_16px_32px_rgba(0,0,0,0.85)]',
@@ -146,8 +342,8 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
     },
     'military-green': {
       plate: 'bg-gradient-to-b from-emerald-950 via-stone-950 to-black',
-      strokeOuter: '#064e3b', // emerald-900
-      strokeInner: '#34d399', // emerald-400
+      strokeOuter: '#064e3b',
+      strokeInner: '#34d399',
       text: 'text-emerald-300',
       accent: 'bg-emerald-400',
       shadow: 'shadow-[0_16px_32px_rgba(0,0,0,0.9)]',
@@ -155,8 +351,8 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
     },
     'vintage-bakelite': {
       plate: 'bg-gradient-to-b from-amber-950/90 via-stone-950 to-stone-900',
-      strokeOuter: '#78350f', // amber-900
-      strokeInner: '#fbbf24', // amber-400
+      strokeOuter: '#78350f',
+      strokeInner: '#fbbf24',
       text: 'text-amber-200',
       accent: 'bg-amber-400',
       shadow: 'shadow-[0_16px_32px_rgba(0,0,0,0.9)]',
@@ -164,8 +360,8 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
     },
     'brushed-aluminum': {
       plate: 'bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950',
-      strokeOuter: '#475569', // slate-600
-      strokeInner: '#38bdf8', // sky-400
+      strokeOuter: '#475569',
+      strokeInner: '#38bdf8',
       text: 'text-sky-200',
       accent: 'bg-sky-400',
       shadow: 'shadow-[0_16px_32px_rgba(0,0,0,0.8)]',
@@ -173,8 +369,8 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
     },
     'cockpit-teal': {
       plate: 'bg-gradient-to-b from-teal-950 via-stone-950 to-black',
-      strokeOuter: '#115e59', // teal-800
-      strokeInner: '#2dd4bf', // teal-400
+      strokeOuter: '#115e59',
+      strokeInner: '#2dd4bf',
       text: 'text-teal-200',
       accent: 'bg-teal-400',
       shadow: 'shadow-[0_16px_32px_rgba(0,0,0,0.9)]',
@@ -182,8 +378,8 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
     },
     'silver-metallic': {
       plate: 'bg-gradient-to-b from-slate-100 via-slate-200 to-slate-350',
-      strokeOuter: '#64748b', // slate-500
-      strokeInner: '#ffffff', // bright white specular highlight
+      strokeOuter: '#64748b',
+      strokeInner: '#ffffff',
       text: 'text-slate-800 font-bold',
       accent: 'bg-sky-500',
       shadow: 'shadow-[0_12px_28px_rgba(0,0,0,0.35)]',
@@ -192,22 +388,21 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
   };
 
   const currentVariant = variantStyles[variant];
-  const shapeConfig = shapeConfigs[shape];
 
   return (
-    <div className={`relative inline-block select-none font-sans ${className}`}>
-      {/* SVG ClipPath Definition for Complex Bezier Curves */}
+    <div className={`relative inline-block select-none font-sans min-w-[280px] ${className}`}>
+      {/* SVG ClipPath Definition */}
       <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
         <defs>
           <clipPath id={clipId} clipPathUnits="objectBoundingBox">
-            <path d={shapeConfig.path} />
+            <path d={activePaths.path} />
           </clipPath>
         </defs>
       </svg>
 
       {/* Outer 3D Extruded Plate Bevel Container */}
       <div
-        className={`relative ${shapeConfig.innerPadding} ${
+        className={`relative ${innerPadding} ${
           isTransparent ? currentVariant.glassBg : currentVariant.plate
         } ${currentVariant.shadow} flex flex-col transition-all duration-200`}
         style={{
@@ -225,7 +420,7 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
         >
           {/* Outer thick border stroke */}
           <path
-            d={shapeConfig.viewBoxPath}
+            d={activePaths.viewBoxPath}
             fill="none"
             stroke={currentVariant.strokeOuter}
             strokeWidth="5"
@@ -233,7 +428,7 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
           />
           {/* Inner metallic bevel highlight line */}
           <path
-            d={shapeConfig.viewBoxPath}
+            d={activePaths.viewBoxPath}
             fill="none"
             stroke={currentVariant.strokeInner}
             strokeWidth="1.5"
@@ -243,43 +438,35 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
           />
         </svg>
 
-        {/* Optional Rivet Bolts at structural non-cut positions */}
+        {/* Optional Rivet Bolts */}
         {showRivets && (
           <div className="absolute inset-0 pointer-events-none z-20">
-            {shape !== 'cut-top-left' && shape !== 'hexagonal' && shape !== 'notched-top' && shape !== 'wave-top' && (
-              <div className="absolute top-2.5 left-2.5 w-2 h-2 rounded-full bg-stone-700 border border-stone-900 shadow-inner" />
-            )}
-            {shape !== 'cut-top-right' && shape !== 'stepped-corner' && shape !== 'hexagonal' && (
-              <div className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-stone-700 border border-stone-900 shadow-inner" />
-            )}
-            {shape !== 'swoop-bottom-left' && (
-              <div className="absolute bottom-2.5 left-2.5 w-2 h-2 rounded-full bg-stone-700 border border-stone-900 shadow-inner" />
-            )}
-            {shape !== 'cut-bottom-right' && (
-              <div className="absolute bottom-2.5 right-2.5 w-2 h-2 rounded-full bg-stone-700 border border-stone-900 shadow-inner" />
-            )}
+            <div className="absolute top-2.5 left-2.5 w-2 h-2 rounded-full bg-stone-700 border border-stone-900 shadow-inner" />
+            <div className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-stone-700 border border-stone-900 shadow-inner" />
+            <div className="absolute bottom-2.5 left-2.5 w-2 h-2 rounded-full bg-stone-700 border border-stone-900 shadow-inner" />
+            <div className="absolute bottom-2.5 right-2.5 w-2 h-2 rounded-full bg-stone-700 border border-stone-900 shadow-inner" />
           </div>
         )}
 
-        {/* Background Technical Grid Texture */}
+        {/* Technical Grid Texture */}
         {showGridPattern && (
           <div className="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:12px_12px] opacity-20 pointer-events-none z-0" />
         )}
 
-        {/* Glass Reflection Glint for Transparent Windows or Silver Metallic finish */}
+        {/* Glass Reflection */}
         {(isTransparent || variant === 'silver-metallic') && showGlassReflection && (
           <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-60 pointer-events-none z-10" />
         )}
 
         {/* Window Banner Tag */}
         {windowLabel && (
-          <div className="relative z-20 mb-2 px-2 py-0.5 bg-stone-950/80 border border-amber-500/40 rounded text-[9px] font-mono font-bold tracking-widest text-amber-400 uppercase self-start flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            {windowLabel}
+          <div className="relative z-20 mb-2 px-2 py-0.5 bg-stone-950/80 border border-amber-500/40 rounded text-[9px] font-mono font-bold tracking-widest text-amber-400 uppercase self-start flex items-center gap-1.5 min-w-[120px]">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+            <span className="truncate">{windowLabel}</span>
           </div>
         )}
 
-        {/* Panel Header Strip - Safe bounds inside cuts */}
+        {/* Panel Header Strip */}
         {(title || panelId) && (
           <div className="relative z-20 flex justify-between items-center pb-2.5 mb-3 border-b border-stone-800/80 max-w-full">
             {title && (
@@ -298,7 +485,7 @@ export const RetroPanel: React.FC<RetroPanelProps> = ({
           </div>
         )}
 
-        {/* Panel Controls / Sub-component Slot Container */}
+        {/* Panel Controls Slot Container */}
         <div
           className={`relative z-20 flex flex-wrap items-center justify-center gap-4 py-1 ${
             recessedSockets
