@@ -11,3 +11,4 @@ export * from './AnalogFaderSlider';
 export * from './SpeakerGrille';
 export * from './VerticalGearbox';
 export * from './ChainedDropdown';
+export * from './RetroAvionicsTable';
