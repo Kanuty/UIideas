@@ -1,6 +1,8 @@
 import React from 'react';
 import { UIComponentItem } from '../types/sandbox';
 import { Button } from '../components/common/Button';
+import { SearchInput } from '../components/common/SearchInput';
+import { Badge } from '../components/common/Badge';
 import { TactilePushButton } from '../components/retro/TactilePushButton';
 import { RotaryKnob } from '../components/retro/RotaryKnob';
 import { DotMatrixDisplay } from '../components/retro/DotMatrixDisplay';
@@ -13,6 +15,7 @@ import { MediaTransportButton } from '../components/retro/MediaTransportButton';
 import { AnalogFaderSlider } from '../components/retro/AnalogFaderSlider';
 import { SpeakerGrille } from '../components/retro/SpeakerGrille';
 import { VerticalGearbox } from '../components/retro/VerticalGearbox';
+import { Toolbar } from '../components/sandbox/Toolbar';
 import { Sparkles } from 'lucide-react';
 
 export const COMPONENT_REGISTRY: UIComponentItem[] = [
@@ -59,6 +62,126 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
         artistName: props.artistName || 'ANALOG FREQUENCY LABS',
         durationSeconds: props.durationSeconds || 214,
       }
+    ),
+  },
+  {
+    id: 'skeuomorphic-toolbar',
+    name: 'Skeuomorphic App Sandbox Toolbar',
+    category: 'Navigation & Menus',
+    description: 'The app sandbox toolbar built entirely with UI controls from this sandbox (gear shift viewport selector, RotaryKnob zoom dial, ToggleSwitch canvas grid switch).',
+    tags: ['toolbar', 'app-shell', 'gearbox', 'knob', 'viewport', 'zoom', 'navigation'],
+    defaultProps: {
+      viewport: 'desktop',
+      showGrid: true,
+      zoom: 1,
+      backdrop: 'tech-grid',
+    },
+    propsSchema: [
+      {
+        name: 'viewport',
+        type: 'select',
+        defaultValue: 'desktop',
+        options: ['desktop', 'tablet', 'mobile'],
+        description: 'Active viewport gear state',
+      },
+      {
+        name: 'showGrid',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Canvas grid toggle switch state',
+      },
+    ],
+    codeSnippet: `<Toolbar
+  viewport="desktop"
+  onViewportChange={(mode) => console.log(mode)}
+  showGrid={true}
+  onToggleGrid={() => {}}
+  zoom={1}
+  onZoomChange={(z) => console.log(z)}
+  onResetZoom={() => {}}
+  backdrop="tech-grid"
+/>`,
+    component: (props: any) => React.createElement(
+      Toolbar,
+      {
+        viewport: props.viewport || 'desktop',
+        onViewportChange: () => {},
+        showGrid: props.showGrid !== undefined ? props.showGrid : true,
+        onToggleGrid: () => {},
+        zoom: props.zoom || 1,
+        onZoomChange: () => {},
+        onResetZoom: () => {},
+        backdrop: 'tech-grid',
+      }
+    ),
+  },
+  {
+    id: 'skeuomorphic-search-input',
+    name: 'Skeuomorphic Search Console',
+    category: 'Forms & Inputs',
+    description: 'Tactile skeuomorphic search console with a 3D metallic plate casing, glowing LCD marquee input field, and clear action button.',
+    tags: ['search', 'input', 'console', 'lcd', 'tactile', 'skeuomorphic', 'form'],
+    defaultProps: {
+      placeholder: 'SEARCH COMPONENTS...',
+      value: 'ROBOTICS',
+    },
+    propsSchema: [
+      {
+        name: 'placeholder',
+        type: 'string',
+        defaultValue: 'SEARCH COMPONENTS...',
+        description: 'LCD placeholder text label',
+      },
+      {
+        name: 'value',
+        type: 'string',
+        defaultValue: 'ROBOTICS',
+        description: 'Current search query text',
+      },
+    ],
+    codeSnippet: `<SearchInput value="ROBOTICS" onChange={(val) => console.log(val)} placeholder="SEARCH COMPONENTS..." />`,
+    component: (props: any) => React.createElement(
+      SearchInput,
+      {
+        value: props.value !== undefined ? props.value : 'ROBOTICS',
+        onChange: () => {},
+        placeholder: props.placeholder || 'SEARCH COMPONENTS...',
+      }
+    ),
+  },
+  {
+    id: 'analog-micro-plate-badge',
+    name: 'Analog Micro-Plate Badges',
+    category: 'Feedback & Indicators',
+    description: 'Physical analog micro-plates including embossed Dymo label tape, screwed corner tags, and stamped metal plates used across app badges and category chips.',
+    tags: ['badge', 'tag', 'plate', 'dymo', 'embossed', 'screwed', 'micro-plate', 'indicator'],
+    defaultProps: {
+      label: 'SYSTEM READY',
+      variant: 'embossed-tape',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'SYSTEM READY',
+        description: 'Text stamped on physical plate',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'embossed-tape',
+        options: ['embossed-tape', 'screwed-tag', 'metal-plate', 'primary'],
+        description: 'Micro-plate structural style',
+      },
+    ],
+    codeSnippet: `<Badge variant="embossed-tape" size="md">SYSTEM READY</Badge>`,
+    component: (props: any) => React.createElement(
+      Badge,
+      {
+        variant: props.variant || 'embossed-tape',
+        size: 'md',
+      },
+      props.label || 'SYSTEM READY'
     ),
   },
   {

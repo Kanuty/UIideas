@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UIComponentItem } from '../../types/sandbox';
 import { Badge } from '../common/Badge';
+import { ToggleSwitch } from '../retro/ToggleSwitch';
 import { Code, Settings, Copy, Check, Info } from 'lucide-react';
 
 export interface InspectorProps {
@@ -26,30 +27,30 @@ export const Inspector: React.FC<InspectorProps> = ({
   };
 
   return (
-    <div className="w-72 border-l border-stone-800 bg-stone-950/80 flex flex-col h-[calc(100vh-3.5rem)] shrink-0 select-none">
+    <div className="w-72 border-l border-stone-800 bg-stone-950/90 flex flex-col h-[calc(100vh-3.5rem)] shrink-0 select-none shadow-[-4px_0_16px_rgba(0,0,0,0.6)] z-20">
       <div className="p-3 border-b border-stone-800/80 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab('props')}
-            className={`px-3 py-1 font-mono text-xs font-bold uppercase rounded transition-all flex items-center gap-1.5 border ${
+            className={`px-3 py-1 font-mono text-xs font-bold uppercase rounded-md transition-all flex items-center gap-1.5 border ${
               activeTab === 'props'
-                ? 'bg-amber-400 text-stone-950 border-amber-300 shadow-[0_2px_6px_rgba(251,191,36,0.4)]'
+                ? 'bg-amber-400 text-stone-950 border-amber-300 shadow-[0_2px_6px_rgba(251,191,36,0.5)]'
                 : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-stone-200'
             }`}
           >
             <Settings className="w-3.5 h-3.5" />
-            Props
+            PROPS
           </button>
           <button
             onClick={() => setActiveTab('code')}
-            className={`px-3 py-1 font-mono text-xs font-bold uppercase rounded transition-all flex items-center gap-1.5 border ${
+            className={`px-3 py-1 font-mono text-xs font-bold uppercase rounded-md transition-all flex items-center gap-1.5 border ${
               activeTab === 'code'
-                ? 'bg-amber-400 text-stone-950 border-amber-300 shadow-[0_2px_6px_rgba(251,191,36,0.4)]'
+                ? 'bg-amber-400 text-stone-950 border-amber-300 shadow-[0_2px_6px_rgba(251,191,36,0.5)]'
                 : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-stone-200'
             }`}
           >
             <Code className="w-3.5 h-3.5" />
-            Code
+            CODE
           </button>
         </div>
       </div>
@@ -58,7 +59,7 @@ export const Inspector: React.FC<InspectorProps> = ({
         <h2 className="text-sm font-mono font-bold text-amber-300 uppercase tracking-wide">{component.name}</h2>
         <p className="text-xs text-stone-400 mt-1 leading-relaxed">{component.description}</p>
         <div className="flex flex-wrap gap-1.5 mt-3">
-          <Badge variant="metal-plate" size="sm">
+          <Badge variant="embossed-tape" size="sm">
             {component.category}
           </Badge>
           {component.tags.map((tag) => (
@@ -80,7 +81,7 @@ export const Inspector: React.FC<InspectorProps> = ({
             ) : (
               <div className="space-y-4">
                 {component.propsSchema.map((prop) => (
-                  <div key={prop.name} className="space-y-1">
+                  <div key={prop.name} className="space-y-1.5">
                     <label className="text-xs font-mono font-bold text-amber-300/90 flex items-center justify-between">
                       <span>{prop.name}</span>
                       <span className="text-[10px] text-stone-500 font-mono lowercase">{prop.type}</span>
@@ -91,34 +92,29 @@ export const Inspector: React.FC<InspectorProps> = ({
                         type="text"
                         value={propsState[prop.name] ?? prop.defaultValue}
                         onChange={(e) => onPropChange(prop.name, e.target.value)}
-                        className="w-full bg-stone-900 text-amber-200 font-mono text-xs px-2.5 py-1.5 rounded border border-stone-700 focus:outline-none focus:border-amber-400 shadow-inner"
+                        className="w-full bg-stone-900 text-amber-200 font-mono text-xs px-2.5 py-1.5 rounded-lg border border-stone-700 focus:outline-none focus:border-amber-400 shadow-inner"
                       />
                     )}
 
                     {prop.type === 'boolean' && (
-                      <button
-                        type="button"
-                        onClick={() => onPropChange(prop.name, !propsState[prop.name])}
-                        className={`w-full text-left font-mono text-xs px-2.5 py-1.5 rounded border transition-colors flex items-center justify-between ${
-                          propsState[prop.name]
-                            ? 'bg-amber-400/10 border-amber-500/50 text-amber-300 font-bold'
-                            : 'bg-stone-900 border-stone-700/80 text-stone-500'
-                        }`}
-                      >
-                        <span>{propsState[prop.name] ? 'ACTIVE' : 'INACTIVE'}</span>
-                        <div
-                          className={`w-3.5 h-3.5 rounded-full border border-stone-900 shadow-sm ${
-                            propsState[prop.name] ? 'bg-amber-400 shadow-[0_0_6px_#fbbf24]' : 'bg-stone-800'
-                          }`}
+                      <div className="flex items-center scale-90 origin-left py-1">
+                        <ToggleSwitch
+                          size="sm"
+                          variant="chrome"
+                          checked={propsState[prop.name] ?? prop.defaultValue}
+                          onChange={(val) => onPropChange(prop.name, val)}
+                          ledStatus="amber"
+                          onLabel="TRUE"
+                          offLabel="FALSE"
                         />
-                      </button>
+                      </div>
                     )}
 
                     {prop.type === 'select' && prop.options && (
                       <select
                         value={propsState[prop.name] ?? prop.defaultValue}
                         onChange={(e) => onPropChange(prop.name, e.target.value)}
-                        className="w-full bg-stone-900 text-amber-200 font-mono text-xs px-2 py-1.5 rounded border border-stone-700 focus:outline-none focus:border-amber-400"
+                        className="w-full bg-stone-900 text-amber-200 font-mono text-xs px-2.5 py-1.5 rounded-lg border border-stone-700 focus:outline-none focus:border-amber-400 shadow-inner"
                       >
                         {prop.options.map((opt) => (
                           <option key={opt} value={opt}>
@@ -126,6 +122,15 @@ export const Inspector: React.FC<InspectorProps> = ({
                           </option>
                         ))}
                       </select>
+                    )}
+
+                    {prop.type === 'number' && (
+                      <input
+                        type="number"
+                        value={propsState[prop.name] ?? prop.defaultValue}
+                        onChange={(e) => onPropChange(prop.name, Number(e.target.value))}
+                        className="w-full bg-stone-900 text-amber-200 font-mono text-xs px-2.5 py-1.5 rounded-lg border border-stone-700 focus:outline-none focus:border-amber-400 shadow-inner"
+                      />
                     )}
 
                     <p className="text-[10px] text-stone-500">{prop.description}</p>
@@ -138,12 +143,12 @@ export const Inspector: React.FC<InspectorProps> = ({
           <div className="relative">
             <button
               onClick={copyCode}
-              className="absolute top-2 right-2 p-1.5 text-stone-400 hover:text-white bg-stone-900 rounded border border-stone-700"
+              className="absolute top-2 right-2 p-1.5 text-stone-400 hover:text-white bg-stone-900 rounded border border-stone-700 shadow-sm"
               title="Copy snippet"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
-            <pre className="bg-stone-950 p-3 rounded-lg border border-stone-800 text-[11px] font-mono text-amber-300/90 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+            <pre className="bg-stone-950 p-3 rounded-lg border border-stone-800 text-[11px] font-mono text-amber-300/90 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner">
               {component.codeSnippet || '// No code snippet available'}
             </pre>
           </div>
