@@ -16,11 +16,15 @@ A physical 3D mounting panel container with irregular polygon silhouettes, chamf
 |---|---|---|---|
 | `title` | `string` | `undefined` | Header title string displayed at the top of the panel plate. |
 | `panelId` | `string` | `undefined` | Technical ID tag string (e.g. `PNL-409`). |
-| `shape` | `'rectangle' \| 'cut-top-right' \| 'cut-top-left' \| 'cut-bottom-right' \| 'stepped-corner' \| 'hexagonal' \| 'notched-top'` | `'cut-top-right'` | Irregular polygon clip silhouette. |
+| `shape` | `'rectangle' \| 'cut-top-right' \| 'cut-top-left' \| 'cut-bottom-right' \| 'stepped-corner' \| 'hexagonal' \| 'notched-top'` | `'cut-top-right'` | Irregular polygon clip silhouette with thick uniform SVG 3D bevel borders. |
 | `variant` | `'dark-steel' \| 'military-green' \| 'vintage-bakelite' \| 'brushed-aluminum' \| 'cockpit-teal'` | `'dark-steel'` | Material finish and color theme. |
-| `showRivets` | `boolean` | `true` | Renders metal corner rivet bolts. |
+| `showRivets` | `boolean` | `true` | Renders metal corner rivet bolts placed safely away from cut corners. |
 | `showGridPattern` | `boolean` | `true` | Displays subtle technical grid backdrop texture. |
-| `children` | `React.ReactNode` | `undefined` | UI controls hosted inside the panel plate. |
+| `isTransparent` | `boolean` | `false` | Renders panel as a transparent glass visor window revealing underlying UI. |
+| `glassOpacity` | `number` | `0.15` | Alpha opacity for the glass panel background (e.g. 0.1 for 90% transparency). |
+| `windowLabel` | `string` | `undefined` | Badge banner tag shown on transparent glass window panels. |
+| `showGlassReflection` | `boolean` | `true` | Renders glass glint glare effect across window surface. |
+| `children` | `React.ReactNode` | `undefined` | UI controls or telemetry displays hosted inside the panel plate. |
 
 ---
 
@@ -75,6 +79,8 @@ A tactile rotary dial with support for continuous values, discrete detent snappi
 | `showScale` | `boolean` | `true` | Shows radial scale tick marks and labels. |
 | `scaleLabels` | `string[]` | `undefined` | Custom text labels for scale ticks. |
 | `detents` | `number` | `undefined` | Number of discrete physical snap points around the scale. |
+| `minAngle` | `number` | `-135` | Rotation angle in degrees corresponding to minimum value (0° is top/12 o'clock). |
+| `maxAngle` | `number` | `135` | Rotation angle in degrees corresponding to maximum value. |
 
 ---
 
