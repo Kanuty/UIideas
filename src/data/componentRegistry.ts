@@ -16,10 +16,85 @@ import { AnalogFaderSlider } from '../components/retro/AnalogFaderSlider';
 import { SpeakerGrille } from '../components/retro/SpeakerGrille';
 import { VerticalGearbox } from '../components/retro/VerticalGearbox';
 import { ChainedDropdown } from '../components/retro/ChainedDropdown';
+import { RetroAvionicsTable } from '../components/retro/RetroAvionicsTable';
 import { Toolbar } from '../components/sandbox/Toolbar';
 import { Sparkles } from 'lucide-react';
 
 export const COMPONENT_REGISTRY: UIComponentItem[] = [
+  {
+    id: 'retro-avionics-table',
+    name: 'Retro 3D Sci-Fi Avionics Table (SAP Fiori Replacement)',
+    category: 'Data Display',
+    description: '3D retro-futuristic table component inspired by 1990s sci-fi vehicle cockpits and avionics. Replaces SAP Fiori tables with dot-matrix LCD monitor cells, speaker mesh toolbar with tactile push buttons, circular indicator row selectors, interactive filtering, sorting, multi-selection, and cockpit status telemetry.',
+    tags: ['table', 'grid', 'fiori', 'sap', 'retro', 'cockpit', 'avionics', 'dot-matrix', 'lcd', 'speaker-mesh', '3d', 'interactive'],
+    defaultProps: {
+      title: 'SAP FIORI TELEMETRY & INVENTORY CONSOLE',
+      panelCode: 'AVIONICS-SYS-1990',
+      theme: 'amber',
+      chassisFinish: 'dark-steel',
+      showSpeakerToolbar: true,
+      pageSize: 5,
+    },
+    propsSchema: [
+      {
+        name: 'title',
+        type: 'string',
+        defaultValue: 'SAP FIORI TELEMETRY & INVENTORY CONSOLE',
+        description: 'Header title text displayed on the cockpit chassis',
+      },
+      {
+        name: 'panelCode',
+        type: 'string',
+        defaultValue: 'AVIONICS-SYS-1990',
+        description: 'Technical code tag watermark in header',
+      },
+      {
+        name: 'theme',
+        type: 'select',
+        defaultValue: 'amber',
+        options: ['amber', 'green', 'cyan', 'red', 'vfd-blue'],
+        description: 'Dot-matrix LCD monitor monochrome glow color',
+      },
+      {
+        name: 'chassisFinish',
+        type: 'select',
+        defaultValue: 'dark-steel',
+        options: ['dark-steel', 'brushed-aluminum', 'cockpit-teal', 'military-green'],
+        description: 'Outer 3D extruded metallic chassis finish style',
+      },
+      {
+        name: 'showSpeakerToolbar',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Render top action toolbar embedded in speaker mesh grille',
+      },
+      {
+        name: 'pageSize',
+        type: 'number',
+        defaultValue: 5,
+        description: 'Number of rows displayed per page',
+      },
+    ],
+    codeSnippet: `<RetroAvionicsTable
+  title="SAP FIORI TELEMETRY & INVENTORY CONSOLE"
+  panelCode="AVIONICS-SYS-1990"
+  theme="amber"
+  chassisFinish="dark-steel"
+  showSpeakerToolbar={true}
+  pageSize={5}
+/>`,
+    component: (props: any) => React.createElement(
+      RetroAvionicsTable,
+      {
+        title: props.title || 'SAP FIORI TELEMETRY & INVENTORY CONSOLE',
+        panelCode: props.panelCode || 'AVIONICS-SYS-1990',
+        theme: props.theme || 'amber',
+        chassisFinish: props.chassisFinish || 'dark-steel',
+        showSpeakerToolbar: props.showSpeakerToolbar !== undefined ? props.showSpeakerToolbar : true,
+        pageSize: props.pageSize || 5,
+      }
+    ),
+  },
   {
     id: 'chained-dropdown',
     name: 'Gothic Suspended Chained Dropdown',
