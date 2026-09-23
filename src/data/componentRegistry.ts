@@ -160,12 +160,13 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
     id: 'skeuomorphic-media-bar',
     name: 'Skeuomorphic Analog Media Bar',
     category: 'Cards & Containers',
-    description: 'Early-2000s skeuomorphic metallic media player deck featuring swooping silver curves, sunken button sockets, track seeking slider, volume bar, and LCD track readout.',
-    tags: ['media', 'player', 'skeuomorphic', 'winamp', 'frutiger-aero', 'metallic', 'retro', 'bar'],
+    description: 'Early-2000s skeuomorphic metallic media player deck featuring swooping silver curves, sunken button sockets, track seeking slider, volume bar, LCD track readout, and customizable color themes.',
+    tags: ['media', 'player', 'skeuomorphic', 'winamp', 'frutiger-aero', 'metallic', 'retro', 'bar', 'theme'],
     defaultProps: {
       trackTitle: 'SYNTHWAVE_O3_ATMOSPHERE.MP3',
       artistName: 'ANALOG FREQUENCY LABS',
       durationSeconds: 214,
+      colorScheme: 'silver',
     },
     propsSchema: [
       {
@@ -186,11 +187,19 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
         defaultValue: 214,
         description: 'Total track duration in seconds',
       },
+      {
+        name: 'colorScheme',
+        type: 'select',
+        defaultValue: 'silver',
+        options: ['silver', 'titanium', 'amber-deck', 'cyan-cyber', 'vfd-blue'],
+        description: 'Chassis material and LED color theme',
+      },
     ],
     codeSnippet: `<SkeuomorphicMediaBar
   trackTitle="SYNTHWAVE_O3_ATMOSPHERE.MP3"
   artistName="ANALOG FREQUENCY LABS"
   durationSeconds={214}
+  colorScheme="silver"
 />`,
     component: (props: any) => React.createElement(
       SkeuomorphicMediaBar,
@@ -198,6 +207,7 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
         trackTitle: props.trackTitle || 'SYNTHWAVE_O3_ATMOSPHERE.MP3',
         artistName: props.artistName || 'ANALOG FREQUENCY LABS',
         durationSeconds: props.durationSeconds || 214,
+        colorScheme: props.colorScheme || 'silver',
       }
     ),
   },
