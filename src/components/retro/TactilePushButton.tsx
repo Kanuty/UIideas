@@ -71,15 +71,15 @@ export const TactilePushButton: React.FC<TactilePushButtonProps> = ({
   }[variant];
 
   const sizeClasses = {
-    sm: { button: 'w-10 h-8 text-[10px]', inner: 'p-0.5', led: 'w-1.5 h-1.5' },
-    md: { button: 'w-14 h-10 text-xs', inner: 'p-1', led: 'w-2 h-2' },
-    lg: { button: 'w-20 h-12 text-sm', inner: 'p-1.5', led: 'w-2.5 h-2.5' },
-    xl: { button: 'w-28 h-16 text-base', inner: 'p-2', led: 'w-3 h-3' },
+    sm: { button: 'min-w-[40px] h-8 text-[10px] px-2', inner: 'p-0.5', led: 'w-1.5 h-1.5' },
+    md: { button: 'min-w-[56px] h-10 text-xs px-3', inner: 'p-1', led: 'w-2 h-2' },
+    lg: { button: 'min-w-[80px] h-12 text-sm px-4', inner: 'p-1.5', led: 'w-2.5 h-2.5' },
+    xl: { button: 'min-w-[112px] h-16 text-base px-5', inner: 'p-2', led: 'w-3 h-3' },
   }[size];
 
   const shapeClasses = {
     rectangular: 'rounded-sm',
-    square: size === 'sm' ? 'w-8 h-8 rounded-sm' : size === 'md' ? 'w-10 h-10 rounded-sm' : size === 'lg' ? 'w-12 h-12 rounded-md' : 'w-16 h-16 rounded-md',
+    square: size === 'sm' ? 'min-w-[32px] h-8 rounded-sm' : size === 'md' ? 'min-w-[40px] h-10 rounded-sm' : size === 'lg' ? 'min-w-[48px] h-12 rounded-md' : 'min-w-[64px] h-16 rounded-md',
     pill: 'rounded-full',
   }[shape];
 
@@ -92,18 +92,18 @@ export const TactilePushButton: React.FC<TactilePushButtonProps> = ({
 
   const renderLabels = () => (
     (label || sublabel) ? (
-      <div className={`text-center ${labelPosition === 'bottom' ? 'mt-1.5' : 'mb-1.5'}`}>
-        {label && <div className="text-[10px] font-bold text-amber-100 tracking-wider uppercase">{label}</div>}
-        {sublabel && <div className="text-[9px] text-amber-200/70 font-mono tracking-tighter">{sublabel}</div>}
+      <div className={`text-center min-w-[70px] ${labelPosition === 'bottom' ? 'mt-1.5' : 'mb-1.5'}`}>
+        {label && <div className="text-[10px] font-bold text-amber-100 tracking-wider uppercase truncate">{label}</div>}
+        {sublabel && <div className="text-[9px] text-amber-200/70 font-mono tracking-tighter truncate">{sublabel}</div>}
       </div>
     ) : null
   );
 
   return (
-    <div className="inline-flex flex-col items-center select-none font-sans">
+    <div className="inline-flex flex-col items-center select-none font-sans min-w-[60px]">
       {labelPosition === 'top' && renderLabels()}
 
-      <div className={`relative ${sizeClasses.inner} bg-stone-900 rounded-md border border-stone-800 shadow-inner flex flex-col items-center justify-center`}>
+      <div className={`relative ${sizeClasses.inner} bg-stone-900 rounded-md border border-stone-800 shadow-inner flex flex-col items-center justify-center min-w-[50px]`}>
         {ledStatus !== 'none' && (
           <div className={`mb-1 ${sizeClasses.led} rounded-full border border-stone-700 ${ledColors} transition-all duration-150`} />
         )}
@@ -116,7 +116,7 @@ export const TactilePushButton: React.FC<TactilePushButtonProps> = ({
           onClick={handleClick}
           className={`
             relative ${sizeClasses.button} ${shapeClasses} font-semibold tracking-wider transition-all duration-75
-            flex items-center justify-center cursor-pointer focus:outline-none
+            flex items-center justify-center cursor-pointer focus:outline-none text-center whitespace-nowrap
             ${variantStyles}
             ${
               isPressed
@@ -131,9 +131,9 @@ export const TactilePushButton: React.FC<TactilePushButtonProps> = ({
             <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:4px_4px] pointer-events-none" />
           )}
 
-          <span className={`relative z-10 flex flex-col items-center ${isPressed ? 'translate-y-0.5 opacity-80' : ''}`}>
+          <span className={`relative z-10 flex flex-col items-center truncate ${isPressed ? 'translate-y-0.5 opacity-80' : ''}`}>
             {labelPosition === 'inside' && label && (
-              <span className="text-[9px] opacity-75 font-mono leading-none mb-0.5">{label}</span>
+              <span className="text-[9px] opacity-75 font-mono leading-none mb-0.5 truncate">{label}</span>
             )}
             {children || label || 'PUSH'}
           </span>
