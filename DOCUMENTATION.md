@@ -49,7 +49,15 @@ Tactile vertical transmission selector lever.
   * `variant` (`'machined-steel' | 'dark-tactile' | 'gold-vintage'`): Material finish.
   * `onChange` (`(index: number, label: string) => void`): Shift callback.
 
-### B. `MediaTransportButton` (`MediaTransportButton.tsx`)
+### B. `SkeuomorphicMediaBar` (`SkeuomorphicMediaBar.tsx`)
+Skeuomorphic analog media player bar deck.
+* **Props**:
+  * `trackTitle` (`string`): Audio track title text.
+  * `artistName` (`string`): Artist or band name label.
+  * `durationSeconds` (`number`): Total audio length in seconds.
+  * `colorScheme` (`'silver' | 'titanium' | 'amber-deck' | 'cyan-cyber' | 'vfd-blue'`): Chassis material and LCD backlight color theme.
+
+### C. `MediaTransportButton` (`MediaTransportButton.tsx`)
 Molded sunken tactile transport button.
 * **Props**:
   * `type` (`'play' | 'pause' | 'stop' | 'rewind' | 'fastforward' | 'record' | 'power' | 'custom'`): Icon action style.
@@ -77,8 +85,10 @@ Skeuomorphic mesh vent panel plate.
 A complete 3D retro-futuristic data table inspired by 1990s sci-fi vehicle cockpits and avionics panels, created to replace standard, flat SAP Fiori data tables.
 
 ### Key Visual & Interactive Features
-* **Dot-Matrix LCD Display Cells**: Each table cell is rendered as an individual recessed LCD screen with scanlines, LED matrix grids, and monochrome glowing text (`amber`, `green`, `cyan`, `red`, `vfd-blue`).
+* **Dot-Matrix LCD Display Cells**: Each table cell is rendered as an LCD screen with scanlines, LED matrix grids, and monochrome glowing text (`amber`, `green`, `cyan`, `red`, `vfd-blue`), optimized for compact spacing with reduced internal cell borders.
 * **Speaker Mesh Toolbar**: Top action bar embedded over a 3D speaker vent mesh panel, equipped with tactile push buttons for search, category filtering, item creation, telemetry data export, and record purging.
+* **Smart Filter Chips**: Preset smart filter bar directly above the table supporting quick views (`ALL SYSTEMS`, `PROPULSION`, `AVIONICS`, `STOCK WARNING`, `HIGH VALUE`).
+* **Personalisation Popup Modal**: 3D cockpit personalisation console popup allowing toggling column visibility, table layout density (`compact` / `normal`), dot-matrix cell grid overlay, chassis metallic finish, and color schemes.
 * **3D Circular Light Row Selectors**: Leftmost selection column styled with 3D tactile push-button indicator lights that illuminate when selected.
 * **Interactive Engine**: Features multi-column sorting, live search filtering, batch record selection, single/batch deletion, pagination, and color theme switcher.
 
@@ -91,6 +101,7 @@ A complete 3D retro-futuristic data table inspired by 1990s sci-fi vehicle cockp
 * `chassisFinish` (`'dark-steel' | 'brushed-aluminum' | 'cockpit-teal' | 'military-green'`): Outer 3D extruded metallic frame style.
 * `showSpeakerToolbar` (`boolean`): Toggle speaker vent toolbar visibility.
 * `pageSize` (`number`): Number of rows displayed per page.
+* `density` (`'compact' | 'normal'`): Vertical row and cell padding density mode.
 * `onRowSelect` (`(selectedIds: string[]) => void`): Callback fired when row selections change.
 * `onAddRecord` (`() => void`): Callback fired when clicking the "ADD ITEM" tactile push button.
 * `onExport` (`() => void`): Callback fired when clicking the "EXPORT" tactile push button.
