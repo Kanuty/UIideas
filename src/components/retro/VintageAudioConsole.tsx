@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { RotaryKnob } from './RotaryKnob';
-import { DotMatrixDisplay, DisplayLine } from './DotMatrixDisplay';
 import { TactilePushButton } from './TactilePushButton';
+import { RotaryKnob } from './RotaryKnob';
+import { DotMatrixDisplay } from './DotMatrixDisplay';
 
 export interface VintageAudioConsoleProps {
   modelName?: string;
@@ -14,128 +14,156 @@ export const VintageAudioConsole: React.FC<VintageAudioConsoleProps> = ({
   initialVolume = 45,
   initialFrequency = 98.5,
 }) => {
+  const [powerOn, setPowerOn] = useState(true);
   const [volume, setVolume] = useState(initialVolume);
   const [frequency, setFrequency] = useState(initialFrequency);
-  const [activeBand, setActiveBand] = useState<'FM' | 'DAB' | 'AM' | 'PAIR'>('FM');
-  const [powerOn, setPowerOn] = useState(true);
+  const [mode, setMode] = useState<'DAB' | 'FM' | 'BT'>('FM');
 
-  const displayLines: (string | DisplayLine)[] = powerOn
+  const displayLines = powerOn
     ? [
-        { text: `10:48 ${activeBand}`, highlight: true, align: 'center' },
-        { text: `BR-KLASSIK   P5`, align: 'left' },
-        { text: `CH ${frequency.toFixed(1)} MHz - Classical Music Symphony - Live Stereo DAB+`, speed: 1 },
+        { text: `10 : 48  ${mode}`, highlight: true },
+        { text: mode === 'FM' ? 'BR-KLASSIK   P5' : 'DIGITAL AUDIO RADIO' },
+        {
+          text:
+            mode === 'FM'
+              ? `${frequency.toFixed(1)} MHz  -  Classical Music Symphony No. 5`
+              : 'STREAMING VIA BLUETOOTH AUDIO',
+          speed: 1,
+        },
       ]
-    : [
-        { text: 'SYSTEM OFF', highlight: true, align: 'center' },
-        { text: 'STANDBY MODE', align: 'center' },
-      ];
+    : [{ text: 'POWER OFF', align: 'center' as const }];
 
   return (
-    <div className="w-full max-w-xl bg-gradient-to-b from-amber-950 via-stone-900 to-amber-950 p-5 rounded-2xl border-4 border-amber-900/80 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative select-none font-sans overflow-hidden">
-      {/* Decorative Gold Trim Lines */}
-      <div className="absolute top-3 left-0 right-0 h-1 bg-gradient-to-r from-amber-600 via-amber-300 to-amber-600 shadow-sm" />
-      <div className="absolute top-5 left-0 right-0 h-0.5 bg-amber-500/60" />
-      <div className="absolute bottom-3 left-0 right-0 h-1 bg-gradient-to-r from-amber-600 via-amber-300 to-amber-600 shadow-sm" />
+    <div className="relative p-6 rounded-2xl bg-gradient-to-b from-amber-950 via-stone-900 to-stone-950 border-4 border-amber-900 shadow-2xl max-w-xl mx-auto select-none font-sans">
+      {/* Wood / Brushed Metal Frame Inner Box */}
+      <div className="relative p-5 rounded-xl bg-stone-950 border-2 border-amber-800/60 shadow-inner overflow-hidden">
+        {/* Brass corner accent trims */}
+        <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-amber-500/80 rounded-tl-lg pointer-events-none" />
+        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-amber-500/80 rounded-tr-lg pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-amber-500/80 rounded-bl-lg pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-amber-500/80 rounded-br-lg pointer-events-none" />
 
-      {/* Brand & Model Header */}
-      <div className="flex justify-between items-center mb-3 px-2">
-        <span className="text-xs font-black tracking-widest text-amber-200/90 uppercase font-mono">
-          {modelName}
-        </span>
-        <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${powerOn ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-rose-900'}`} />
-          <span className="text-[10px] font-mono text-amber-300/70">POWER</span>
-        </div>
-      </div>
-
-      {/* Main Control Panel Surface */}
-      <div className="bg-stone-950 p-4 rounded-xl border border-stone-800 shadow-inner flex items-center justify-between gap-4 relative">
-        {/* Left Volume Knob */}
-        <div className="flex flex-col items-center shrink-0">
-          <RotaryKnob
-            label="VOLUME"
-            min={0}
-            max={100}
-            value={volume}
-            onChange={setVolume}
-            size="sm"
-            unit="%"
-          />
+        {/* Top Header Label */}
+        <div className="flex justify-between items-center mb-4 pb-2 border-b border-amber-900/40">
+          <div className="text-xs font-black tracking-widest text-amber-200 uppercase font-mono">
+            {modelName}
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                powerOn ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]' : 'bg-stone-700'
+              }`}
+            />
+            <span className="text-[9px] font-mono tracking-wider text-amber-200/70 uppercase">
+              {powerOn ? 'POWER' : 'STANDBY'}
+            </span>
+          </div>
         </div>
 
-        {/* Center Screen Display */}
-        <div className="flex-1 min-w-0 flex flex-col items-center justify-center">
-          <DotMatrixDisplay
-            lines={displayLines}
-            color={powerOn ? 'amber' : 'red'}
-            className="w-full"
-          />
+        {/* Main Interface: Left Knob | Center Screen | Right Knob */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center mb-6">
+          <div className="flex justify-center md:col-span-1">
+            <RotaryKnob
+              label="VOLUME"
+              min={0}
+              max={100}
+              value={volume}
+              onChange={setVolume}
+              size="md"
+              style="ribbed"
+              variant="amber-gold"
+              unit="%"
+            />
+          </div>
+
+          <div className="flex justify-center md:col-span-2">
+            <DotMatrixDisplay
+              lines={displayLines}
+              color={powerOn ? 'amber' : 'red'}
+              scrollSpeed={powerOn ? 1 : 0}
+            />
+          </div>
+
+          <div className="flex justify-center md:col-span-1">
+            <RotaryKnob
+              label="TUNING / SKIP"
+              min={87.5}
+              max={108.0}
+              step={0.1}
+              value={frequency}
+              onChange={setFrequency}
+              size="md"
+              style="ribbed"
+              variant="amber-gold"
+              unit=" MHz"
+            />
+          </div>
         </div>
 
-        {/* Right Tuning/Skip Knob */}
-        <div className="flex flex-col items-center shrink-0">
-          <RotaryKnob
-            label="TUNING / SKIP"
-            min={875}
-            max={1080}
-            value={Math.round(frequency * 10)}
-            onChange={(val) => setFrequency(val / 10)}
-            size="sm"
-            unit=" MHz"
-          />
+        {/* Bottom Tactile Switch Row */}
+        <div className="pt-3 border-t border-amber-900/40 flex flex-wrap justify-around items-center gap-2">
+          <TactilePushButton
+            label="POWER"
+            sublabel="FUNCTION"
+            variant={powerOn ? 'cream' : 'silver'}
+            showDots={false}
+            isPressed={!powerOn}
+            onClick={() => setPowerOn(!powerOn)}
+          >
+            {powerOn ? 'ON' : 'OFF'}
+          </TactilePushButton>
+
+          <TactilePushButton
+            label="ALARM"
+            sublabel="SLEEP"
+            variant="cream"
+            showDots={false}
+            isPressed={mode === 'DAB'}
+            onClick={() => setMode('DAB')}
+          >
+            DAB
+          </TactilePushButton>
+
+          <TactilePushButton
+            label="SCAN"
+            sublabel="PLAY/PAUSE"
+            variant="cream"
+            showDots={false}
+            isPressed={mode === 'FM'}
+            onClick={() => setMode('FM')}
+          >
+            FM
+          </TactilePushButton>
+
+          <TactilePushButton
+            label="PAIR"
+            sublabel="STOP"
+            variant="cream"
+            showDots={false}
+            isPressed={mode === 'BT'}
+            onClick={() => setMode('BT')}
+          >
+            BT
+          </TactilePushButton>
+
+          <TactilePushButton
+            label="PRESET"
+            sublabel="P-MODE"
+            variant="silver"
+            showDots={false}
+          >
+            PRESET
+          </TactilePushButton>
+
+          <TactilePushButton
+            label="MENU"
+            sublabel="INFO"
+            variant="silver"
+            showDots={false}
+          >
+            INFO
+          </TactilePushButton>
         </div>
-      </div>
-
-      {/* Bottom Physical Push Buttons Deck */}
-      <div className="mt-4 flex items-center justify-center gap-1.5 flex-wrap">
-        <TactilePushButton
-          label="POWER"
-          sublabel="FUNCTION"
-          isPressed={!powerOn}
-          onClick={() => setPowerOn(!powerOn)}
-        >
-          {powerOn ? 'ON' : 'OFF'}
-        </TactilePushButton>
-
-        <TactilePushButton
-          label="ALARM"
-          sublabel="SLEEP"
-          onClick={() => setActiveBand('DAB')}
-        >
-          DAB
-        </TactilePushButton>
-
-        <TactilePushButton
-          label="SCAN"
-          sublabel="PLAY/PAUSE"
-          onClick={() => setFrequency((f) => (f >= 107.5 ? 88.0 : f + 0.5))}
-        >
-          FM
-        </TactilePushButton>
-
-        <TactilePushButton
-          label="PAIR"
-          sublabel="STOP"
-          onClick={() => setActiveBand('PAIR')}
-        >
-          BT
-        </TactilePushButton>
-
-        <TactilePushButton
-          label="PRESET"
-          sublabel="P-MODE"
-          onClick={() => setFrequency(98.5)}
-        >
-          PRESET
-        </TactilePushButton>
-
-        <TactilePushButton
-          label="MENU"
-          sublabel="INFO"
-          onClick={() => alert(`Frequency: ${frequency.toFixed(1)} MHz | Volume: ${volume}%`)}
-        >
-          INFO
-        </TactilePushButton>
       </div>
     </div>
   );
