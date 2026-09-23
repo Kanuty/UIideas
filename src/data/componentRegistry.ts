@@ -8,25 +8,72 @@ import { ToggleSwitch } from '../components/retro/ToggleSwitch';
 import { RetroPanel } from '../components/retro/RetroPanel';
 import { VintageAudioConsole } from '../components/retro/VintageAudioConsole';
 import { CockpitControlPanel } from '../components/retro/CockpitControlPanel';
+import { SkeuomorphicMediaBar } from '../components/retro/SkeuomorphicMediaBar';
 import { Sparkles } from 'lucide-react';
 
 export const COMPONENT_REGISTRY: UIComponentItem[] = [
   {
+    id: 'skeuomorphic-media-bar',
+    name: 'Skeuomorphic Analog Media Bar',
+    category: 'Cards & Containers',
+    description: 'Early-2000s skeuomorphic metallic media player deck featuring swooping silver curves, sunken button sockets, track seeking slider, volume bar, and LCD track readout.',
+    tags: ['media', 'player', 'skeuomorphic', 'winamp', 'frutiger-aero', 'metallic', 'retro', 'bar'],
+    defaultProps: {
+      trackTitle: 'SYNTHWAVE_O3_ATMOSPHERE.MP3',
+      artistName: 'ANALOG FREQUENCY LABS',
+      durationSeconds: 214,
+    },
+    propsSchema: [
+      {
+        name: 'trackTitle',
+        type: 'string',
+        defaultValue: 'SYNTHWAVE_O3_ATMOSPHERE.MP3',
+        description: 'Song / audio track title',
+      },
+      {
+        name: 'artistName',
+        type: 'string',
+        defaultValue: 'ANALOG FREQUENCY LABS',
+        description: 'Artist / band name label',
+      },
+      {
+        name: 'durationSeconds',
+        type: 'number',
+        defaultValue: 214,
+        description: 'Total track duration in seconds',
+      },
+    ],
+    codeSnippet: `<SkeuomorphicMediaBar
+  trackTitle="SYNTHWAVE_O3_ATMOSPHERE.MP3"
+  artistName="ANALOG FREQUENCY LABS"
+  durationSeconds={214}
+/>`,
+    component: (props: any) => React.createElement(
+      SkeuomorphicMediaBar,
+      {
+        trackTitle: props.trackTitle || 'SYNTHWAVE_O3_ATMOSPHERE.MP3',
+        artistName: props.artistName || 'ANALOG FREQUENCY LABS',
+        durationSeconds: props.durationSeconds || 214,
+      }
+    ),
+  },
+  {
     id: 'retro-panel',
     name: 'Retro 3D Irregular Panel Plate',
     category: 'Cards & Containers',
-    description: '3D extruded industrial panel plate with irregular polygon cuts, bevel edges, corner rivets, and technical backdrop patterns for hosting controls.',
-    tags: ['panel', 'card', '3d', 'irregular', 'cut', 'retro', 'container', 'plate'],
+    description: '3D extruded industrial panel plate with organic curves, swoops, irregular polygon cuts, bevel edges, molded sockets, corner rivets, and technical backdrop patterns for hosting controls.',
+    tags: ['panel', 'card', '3d', 'irregular', 'cut', 'curves', 'swoop', 'retro', 'container', 'plate'],
     defaultProps: {
       title: 'RADAR AVIONICS PLATE',
       panelId: 'PNL-409',
-      shape: 'cut-top-right',
-      variant: 'dark-steel',
+      shape: 'swoop-bottom-left',
+      variant: 'silver-metallic',
       showRivets: true,
       showGridPattern: true,
       isTransparent: false,
       glassOpacity: 0.15,
       windowLabel: '',
+      recessedSockets: true,
     },
     propsSchema: [
       {
@@ -44,15 +91,35 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
       {
         name: 'shape',
         type: 'select',
-        defaultValue: 'cut-top-right',
-        options: ['rectangle', 'cut-top-right', 'cut-top-left', 'cut-bottom-right', 'stepped-corner', 'hexagonal', 'notched-top'],
-        description: 'Irregular 3D polygon silhouette shape',
+        defaultValue: 'swoop-bottom-left',
+        options: [
+          'rectangle',
+          'cut-top-right',
+          'cut-top-left',
+          'cut-bottom-right',
+          'stepped-corner',
+          'hexagonal',
+          'notched-top',
+          'swoop-bottom-left',
+          'curved-notch',
+          'concave-inset',
+          'molded-pod',
+          'wave-top',
+        ],
+        description: 'Silhouette shape (straight cut or organic swooping curves)',
       },
       {
         name: 'variant',
         type: 'select',
-        defaultValue: 'dark-steel',
-        options: ['dark-steel', 'military-green', 'vintage-bakelite', 'brushed-aluminum', 'cockpit-teal'],
+        defaultValue: 'silver-metallic',
+        options: [
+          'dark-steel',
+          'military-green',
+          'vintage-bakelite',
+          'brushed-aluminum',
+          'cockpit-teal',
+          'silver-metallic',
+        ],
         description: 'Material finish style',
       },
       {
@@ -79,8 +146,20 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
         defaultValue: '',
         description: 'Glass window badge label banner',
       },
+      {
+        name: 'recessedSockets',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Host child controls inside molded sunken socket pods',
+      },
     ],
-    codeSnippet: `<RetroPanel title="RADAR AVIONICS PLATE" panelId="PNL-409" shape="cut-top-right" variant="dark-steel">
+    codeSnippet: `<RetroPanel
+  title="RADAR AVIONICS PLATE"
+  panelId="PNL-409"
+  shape="swoop-bottom-left"
+  variant="silver-metallic"
+  recessedSockets={true}
+>
   <ToggleSwitch label="POWER" hasGuard={true} />
   <RotaryKnob label="GAIN" size="md" style="cockpit" />
 </RetroPanel>`,
@@ -89,13 +168,14 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
       {
         title: props.title || 'RADAR AVIONICS PLATE',
         panelId: props.panelId || 'PNL-409',
-        shape: props.shape || 'cut-top-right',
-        variant: props.variant || 'dark-steel',
+        shape: props.shape || 'swoop-bottom-left',
+        variant: props.variant || 'silver-metallic',
         showRivets: props.showRivets !== undefined ? props.showRivets : true,
         showGridPattern: props.showGridPattern !== undefined ? props.showGridPattern : true,
         isTransparent: props.isTransparent !== undefined ? props.isTransparent : false,
         glassOpacity: props.glassOpacity !== undefined ? props.glassOpacity : 0.15,
         windowLabel: props.windowLabel || '',
+        recessedSockets: props.recessedSockets !== undefined ? props.recessedSockets : true,
       },
       React.createElement(
         'div',
