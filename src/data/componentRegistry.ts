@@ -15,10 +15,72 @@ import { MediaTransportButton } from '../components/retro/MediaTransportButton';
 import { AnalogFaderSlider } from '../components/retro/AnalogFaderSlider';
 import { SpeakerGrille } from '../components/retro/SpeakerGrille';
 import { VerticalGearbox } from '../components/retro/VerticalGearbox';
+import { ChainedDropdown } from '../components/retro/ChainedDropdown';
 import { Toolbar } from '../components/sandbox/Toolbar';
 import { Sparkles } from 'lucide-react';
 
 export const COMPONENT_REGISTRY: UIComponentItem[] = [
+  {
+    id: 'chained-dropdown',
+    name: 'Gothic Suspended Chained Dropdown',
+    category: 'Navigation & Menus',
+    description: 'Skeuomorphic dropdown control featuring stacked metal/wooden plates suspended by animated metal chain links, ornate header frames, and eyelet rings inspired by classic RPG menus.',
+    tags: ['dropdown', 'chained', 'gothic', 'retro', 'menu', 'chains', 'plates', 'metal', 'wood'],
+    defaultProps: {
+      label: 'SELECT CHARACTER CLASS',
+      material: 'gothic-dark',
+      chainStyle: 'metal-chain',
+      defaultValue: 'Werewolf Hunt',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'SELECT CHARACTER CLASS',
+        description: 'Header text above main eyelet plate',
+      },
+      {
+        name: 'material',
+        type: 'select',
+        defaultValue: 'gothic-dark',
+        options: ['gothic-dark', 'brushed-steel', 'ornate-gold', 'dark-wood'],
+        description: 'Material finish of suspended plates and headers',
+      },
+      {
+        name: 'chainStyle',
+        type: 'select',
+        defaultValue: 'metal-chain',
+        options: ['metal-chain', 'bronze-rings', 'rope-link'],
+        description: 'Style of connecting chain links or ropes',
+      },
+    ],
+    codeSnippet: `<ChainedDropdown
+  label="SELECT CHARACTER CLASS"
+  material="gothic-dark"
+  chainStyle="metal-chain"
+  options={[
+    { value: 'Demon Hunt', label: 'Demon Hunt', badge: 'LVL 10' },
+    { value: 'Werewolf Hunt', label: 'Werewolf Hunt', badge: 'ACTIVE' },
+    { value: 'Man Hunt', label: 'Man Hunt', badge: 'HARD' },
+    { value: 'Hunt Statistics', label: 'Hunt Statistics' },
+  ]}
+/>`,
+    component: (props: any) => React.createElement(
+      ChainedDropdown,
+      {
+        label: props.label || 'SELECT CHARACTER CLASS',
+        material: props.material || 'gothic-dark',
+        chainStyle: props.chainStyle || 'metal-chain',
+        defaultValue: props.defaultValue || 'Werewolf Hunt',
+        options: [
+          { value: 'Demon Hunt', label: 'Demon Hunt', badge: 'LVL 10' },
+          { value: 'Werewolf Hunt', label: 'Werewolf Hunt', badge: 'ACTIVE' },
+          { value: 'Man Hunt', label: 'Man Hunt', badge: 'HARD' },
+          { value: 'Hunt Statistics', label: 'Hunt Statistics' },
+        ],
+      }
+    ),
+  },
   {
     id: 'skeuomorphic-media-bar',
     name: 'Skeuomorphic Analog Media Bar',

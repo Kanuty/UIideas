@@ -79,7 +79,7 @@ export const AnalogFaderSlider: React.FC<AnalogFaderSliderProps> = ({
     }
   };
 
-  const percent = ((currentValue - min) / (max - min)) * 100;
+  const percent = Math.max(0, Math.min(100, ((currentValue - min) / (max - min)) * 100));
 
   const variantStyles: Record<
     FaderVariant,
@@ -123,13 +123,13 @@ export const AnalogFaderSlider: React.FC<AnalogFaderSliderProps> = ({
 
       {/* Track & Fader Thumb Slot */}
       <div className="relative flex-1 flex items-center justify-center w-full">
-        {/* Scale Ticks */}
+        {/* Scale Ticks - aligned precisely to track ends */}
         {ticks > 0 && (
           <div
             className={`absolute flex justify-between pointer-events-none ${
               orientation === 'vertical'
-                ? 'top-2 bottom-2 left-1/2 -translate-x-1/2 w-14 flex-col'
-                : 'left-2 right-2 top-1/2 -translate-y-1/2 h-10 flex-row'
+                ? 'top-0 bottom-0 left-1/2 -translate-x-1/2 w-14 flex-col'
+                : 'left-0 right-0 top-1/2 -translate-y-1/2 h-10 flex-row'
             }`}
           >
             {Array.from({ length: ticks }).map((_, idx) => (
@@ -165,13 +165,13 @@ export const AnalogFaderSlider: React.FC<AnalogFaderSliderProps> = ({
 
           {/* Fader Knob Cap */}
           <div
-            className={`absolute rounded border cursor-grab active:cursor-grabbing z-20 flex items-center justify-center transition-transform ${style.cap} ${
+            className={`absolute rounded border cursor-grab active:cursor-grabbing z-20 flex items-center justify-center transition-all duration-75 ${style.cap} ${
               orientation === 'vertical'
-                ? 'w-10 h-6 -left-3.5 -translate-y-1/2'
-                : 'h-10 w-6 -top-3.5 -translate-x-1/2'
+                ? 'w-10 h-6 left-1/2 -translate-x-1/2 translate-y-1/2'
+                : 'h-10 w-6 top-1/2 -translate-y-1/2 -translate-x-1/2'
             }`}
             style={{
-              [orientation === 'vertical' ? 'bottom' : 'left']: `calc(${percent}% - 0px)`,
+              [orientation === 'vertical' ? 'bottom' : 'left']: `${percent}%`,
             }}
           >
             {/* Center Position Line */}

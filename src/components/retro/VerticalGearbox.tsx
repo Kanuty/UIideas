@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
 
 export type GearboxVariant = 'machined-steel' | 'dark-tactile' | 'gold-vintage';
+export type GearboxOrientation = 'vertical' | 'horizontal';
 
 export interface VerticalGearboxProps {
   label?: string;
   positions?: string[]; // e.g. ['P', 'R', 'N', 'D', 'L'] or ['1', '2', '3', '4', '5']
   currentPosition?: number; // index into positions
   defaultPosition?: number;
+  orientation?: GearboxOrientation;
   variant?: GearboxVariant;
   onChange?: (index: number, positionLabel: string) => void;
   className?: string;
@@ -17,6 +19,7 @@ export const VerticalGearbox: React.FC<VerticalGearboxProps> = ({
   positions = ['1', '2', '3', '4', '5', 'R'],
   currentPosition: controlledPosition,
   defaultPosition = 0,
+  orientation = 'vertical',
   variant = 'machined-steel',
   onChange,
   className = '',
@@ -27,11 +30,18 @@ export const VerticalGearbox: React.FC<VerticalGearboxProps> = ({
   const trackRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef<boolean>(false);
 
-  const updatePosFromClientY = (clientY: number) => {
+  const updatePosFromClientPos = (clientX: number, clientY: number) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
-    const offset = clientY - rect.top;
-    const percentage = Math.max(0, Math.min(1, offset / rect.height));
+    let percentage = 0;
+
+    if (orientation === 'vertical') {
+      const offset = clientY - rect.top;
+      percentage = Math.max(0, Math.min(1, offset / rect.height));
+    } else {
+      const offset = clientX - rect.left;
+      percentage = Math.max(0, Math.min(1, offset / rect.width));
+    }
 
     const total = positions.length;
     const index = Math.min(total - 1, Math.max(0, Math.floor(percentage * total)));
@@ -45,12 +55,12 @@ export const VerticalGearbox: React.FC<VerticalGearboxProps> = ({
   const handlePointerDown = (e: React.PointerEvent) => {
     isDragging.current = true;
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    updatePosFromClientY(e.clientY);
+    updatePosFromClientPos(e.clientX, e.clientY);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (isDragging.current) {
-      updatePosFromClientY(e.clientY);
+      updatePosFromClientPos(e.clientX, e.clientY);
     }
   };
 
@@ -96,21 +106,32 @@ export const VerticalGearbox: React.FC<VerticalGearboxProps> = ({
 
   const style = variantStyles[variant];
   const stepPercent = 100 / positions.length;
-  const knobTopPercent = activeIndex * stepPercent + stepPercent / 2;
+  const knobPosPercent = activeIndex * stepPercent + stepPercent / 2;
 
   return (
-    <div className={`relative inline-flex flex-col items-center select-none font-sans min-w-[150px] ${className}`}>
+    <div className={`relative inline-flex flex-col items-center select-none font-sans ${className}`}>
       {label && (
-        <span className="text-[10px] font-mono font-bold tracking-widest text-slate-400 uppercase mb-2 min-w-[120px] text-center truncate">
+        <span className="text-[10px] font-mono font-bold tracking-widest text-slate-400 uppercase mb-1.5 min-w-[120px] text-center truncate">
           {label}
         </span>
       )}
 
       {/* Main Gearbox Casing Frame */}
-      <div className={`relative p-4 rounded-2xl border flex items-center gap-4 ${style.casing}`}>
-
-        {/* Left Side Gear Position Labels */}
-        <div className="flex flex-col justify-between h-56 font-mono text-xs font-bold py-1 min-w-[28px]">
+      <div
+        className={`relative rounded-2xl border ${
+          orientation === 'vertical'
+            ? 'p-4 flex items-center gap-4'
+            : 'p-3 flex flex-col justify-center gap-3'
+        } ${style.casing}`}
+      >
+        {/* Gear Position Labels */}
+        <div
+          className={`font-mono text-xs font-bold ${
+            orientation === 'vertical'
+              ? 'flex flex-col justify-between h-56 py-1 min-w-[28px]'
+              : 'flex flex-row justify-between w-56 px-1 min-h-[28px]'
+          }`}
+        >
           {positions.map((pos, idx) => {
             const isActive = idx === activeIndex;
             return (
@@ -133,31 +154,68 @@ export const VerticalGearbox: React.FC<VerticalGearboxProps> = ({
           })}
         </div>
 
-        {/* Vertical Track Slot & Lever Knob */}
+        {/* Track Slot & Lever Knob */}
         <div
           ref={trackRef}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
-          className={`relative w-10 h-56 rounded-full border cursor-pointer ${style.track} flex justify-center`}
+          className={`relative rounded-full border cursor-pointer ${style.track} flex justify-center items-center ${
+            orientation === 'vertical' ? 'w-10 h-56' : 'h-10 w-56'
+          }`}
         >
           {/* Mechanical Detent Tick Lines along the track */}
-          <div className="absolute inset-y-2 flex flex-col justify-between items-center pointer-events-none">
+          <div
+            className={`absolute flex pointer-events-none items-center justify-between ${
+              orientation === 'vertical'
+                ? 'inset-y-2 flex-col'
+                : 'inset-x-2 flex-row'
+            }`}
+          >
             {positions.map((_, i) => (
-              <div key={i} className="w-4 h-0.5 bg-slate-700/80 rounded-full" />
+              <div
+                key={i}
+                className={`bg-slate-700/80 rounded-full ${
+                  orientation === 'vertical' ? 'w-4 h-0.5' : 'h-4 w-0.5'
+                }`}
+              />
             ))}
           </div>
 
           {/* Heavy Lever Knob Handle */}
           <div
-            className={`absolute w-12 h-10 rounded-xl border cursor-grab active:cursor-grabbing z-20 -translate-y-1/2 flex items-center justify-center transition-all duration-150 ${style.leverKnob}`}
-            style={{ top: `${knobTopPercent}%` }}
+            className={`absolute rounded-xl border cursor-grab active:cursor-grabbing z-20 flex items-center justify-center transition-all duration-150 ${
+              style.leverKnob
+            } ${
+              orientation === 'vertical'
+                ? 'w-12 h-10 -translate-y-1/2'
+                : 'h-12 w-10 -translate-x-1/2'
+            }`}
+            style={{
+              [orientation === 'vertical' ? 'top' : 'left']: `${knobPosPercent}%`,
+            }}
           >
             {/* Center Metallic Grip Ribs */}
-            <div className="flex gap-1 items-center pointer-events-none">
-              <div className="w-1 h-5 bg-slate-800/60 rounded-full" />
-              <div className="w-1 h-5 bg-slate-800/60 rounded-full" />
-              <div className="w-1 h-5 bg-slate-800/60 rounded-full" />
+            <div
+              className={`flex items-center pointer-events-none ${
+                orientation === 'vertical' ? 'flex-row gap-1' : 'flex-col gap-1'
+              }`}
+            >
+              <div
+                className={`bg-slate-800/60 rounded-full ${
+                  orientation === 'vertical' ? 'w-1 h-5' : 'h-1 w-5'
+                }`}
+              />
+              <div
+                className={`bg-slate-800/60 rounded-full ${
+                  orientation === 'vertical' ? 'w-1 h-5' : 'h-1 w-5'
+                }`}
+              />
+              <div
+                className={`bg-slate-800/60 rounded-full ${
+                  orientation === 'vertical' ? 'w-1 h-5' : 'h-1 w-5'
+                }`}
+              />
             </div>
           </div>
         </div>
