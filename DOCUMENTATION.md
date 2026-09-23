@@ -72,7 +72,32 @@ Skeuomorphic mesh vent panel plate.
 
 ---
 
-## 3. Dynamic Sizing & Layout Stability Rules
+## 3. Retro 3D Sci-Fi Avionics Table (`RetroAvionicsTable.tsx`)
+
+A complete 3D retro-futuristic data table inspired by 1990s sci-fi vehicle cockpits and avionics panels, created to replace standard, flat SAP Fiori data tables.
+
+### Key Visual & Interactive Features
+* **Dot-Matrix LCD Display Cells**: Each table cell is rendered as an individual recessed LCD screen with scanlines, LED matrix grids, and monochrome glowing text (`amber`, `green`, `cyan`, `red`, `vfd-blue`).
+* **Speaker Mesh Toolbar**: Top action bar embedded over a 3D speaker vent mesh panel, equipped with tactile push buttons for search, category filtering, item creation, telemetry data export, and record purging.
+* **3D Circular Light Row Selectors**: Leftmost selection column styled with 3D tactile push-button indicator lights that illuminate when selected.
+* **Interactive Engine**: Features multi-column sorting, live search filtering, batch record selection, single/batch deletion, pagination, and color theme switcher.
+
+### Props API
+* `title` (`string`): Main header title on chassis frame.
+* `panelCode` (`string`): Technical watermark ID code tag.
+* `columns` (`TableColumn[]`): Array of column definitions (supports `text`, `badge`, `number`, `currency`, `rating`, `actions`).
+* `data` (`TableItem[]`): Dataset array of records.
+* `theme` (`'amber' | 'green' | 'cyan' | 'red' | 'vfd-blue'`): Monochrome LCD monitor glow color scheme.
+* `chassisFinish` (`'dark-steel' | 'brushed-aluminum' | 'cockpit-teal' | 'military-green'`): Outer 3D extruded metallic frame style.
+* `showSpeakerToolbar` (`boolean`): Toggle speaker vent toolbar visibility.
+* `pageSize` (`number`): Number of rows displayed per page.
+* `onRowSelect` (`(selectedIds: string[]) => void`): Callback fired when row selections change.
+* `onAddRecord` (`() => void`): Callback fired when clicking the "ADD ITEM" tactile push button.
+* `onExport` (`() => void`): Callback fired when clicking the "EXPORT" tactile push button.
+
+---
+
+## 4. Dynamic Sizing & Layout Stability Rules
 
 To prevent button or display shrinkage and layout jitter during value updates (e.g. toggling labels from `'ON'` to `'RECALIBRATING_SYSTEM'`):
 1. All button elements (`TactilePushButton`, `MediaTransportButton`) enforce minimum width bounding constraints calculated for their maximum possible label length.
