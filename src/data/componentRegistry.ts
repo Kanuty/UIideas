@@ -1,0 +1,996 @@
+import React from 'react';
+import { UIComponentItem } from '../types/sandbox';
+import { Button } from '../components/common/Button';
+import { SearchInput } from '../components/common/SearchInput';
+import { Badge } from '../components/common/Badge';
+import { TactilePushButton } from '../components/retro/TactilePushButton';
+import { RotaryKnob } from '../components/retro/RotaryKnob';
+import { DotMatrixDisplay } from '../components/retro/DotMatrixDisplay';
+import { ToggleSwitch } from '../components/retro/ToggleSwitch';
+import { RetroPanel } from '../components/retro/RetroPanel';
+import { VintageAudioConsole } from '../components/retro/VintageAudioConsole';
+import { CockpitControlPanel } from '../components/retro/CockpitControlPanel';
+import { SkeuomorphicMediaBar } from '../components/retro/SkeuomorphicMediaBar';
+import { MediaTransportButton } from '../components/retro/MediaTransportButton';
+import { AnalogFaderSlider } from '../components/retro/AnalogFaderSlider';
+import { SpeakerGrille } from '../components/retro/SpeakerGrille';
+import { VerticalGearbox } from '../components/retro/VerticalGearbox';
+import { ChainedDropdown } from '../components/retro/ChainedDropdown';
+import { Toolbar } from '../components/sandbox/Toolbar';
+import { Sparkles } from 'lucide-react';
+
+export const COMPONENT_REGISTRY: UIComponentItem[] = [
+  {
+    id: 'chained-dropdown',
+    name: 'Gothic Suspended Chained Dropdown',
+    category: 'Navigation & Menus',
+    description: 'Skeuomorphic dropdown control featuring stacked metal/wooden plates suspended by animated metal chain links, ornate header frames, and eyelet rings inspired by classic RPG menus.',
+    tags: ['dropdown', 'chained', 'gothic', 'retro', 'menu', 'chains', 'plates', 'metal', 'wood'],
+    defaultProps: {
+      label: 'SELECT CHARACTER CLASS',
+      material: 'gothic-dark',
+      chainStyle: 'metal-chain',
+      defaultValue: 'Werewolf Hunt',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'SELECT CHARACTER CLASS',
+        description: 'Header text above main eyelet plate',
+      },
+      {
+        name: 'material',
+        type: 'select',
+        defaultValue: 'gothic-dark',
+        options: ['gothic-dark', 'brushed-steel', 'ornate-gold', 'dark-wood'],
+        description: 'Material finish of suspended plates and headers',
+      },
+      {
+        name: 'chainStyle',
+        type: 'select',
+        defaultValue: 'metal-chain',
+        options: ['metal-chain', 'bronze-rings', 'rope-link'],
+        description: 'Style of connecting chain links or ropes',
+      },
+    ],
+    codeSnippet: `<ChainedDropdown
+  label="SELECT CHARACTER CLASS"
+  material="gothic-dark"
+  chainStyle="metal-chain"
+  options={[
+    { value: 'Demon Hunt', label: 'Demon Hunt', badge: 'LVL 10' },
+    { value: 'Werewolf Hunt', label: 'Werewolf Hunt', badge: 'ACTIVE' },
+    { value: 'Man Hunt', label: 'Man Hunt', badge: 'HARD' },
+    { value: 'Hunt Statistics', label: 'Hunt Statistics' },
+  ]}
+/>`,
+    component: (props: any) => React.createElement(
+      ChainedDropdown,
+      {
+        label: props.label || 'SELECT CHARACTER CLASS',
+        material: props.material || 'gothic-dark',
+        chainStyle: props.chainStyle || 'metal-chain',
+        defaultValue: props.defaultValue || 'Werewolf Hunt',
+        options: [
+          { value: 'Demon Hunt', label: 'Demon Hunt', badge: 'LVL 10' },
+          { value: 'Werewolf Hunt', label: 'Werewolf Hunt', badge: 'ACTIVE' },
+          { value: 'Man Hunt', label: 'Man Hunt', badge: 'HARD' },
+          { value: 'Hunt Statistics', label: 'Hunt Statistics' },
+        ],
+      }
+    ),
+  },
+  {
+    id: 'skeuomorphic-media-bar',
+    name: 'Skeuomorphic Analog Media Bar',
+    category: 'Cards & Containers',
+    description: 'Early-2000s skeuomorphic metallic media player deck featuring swooping silver curves, sunken button sockets, track seeking slider, volume bar, and LCD track readout.',
+    tags: ['media', 'player', 'skeuomorphic', 'winamp', 'frutiger-aero', 'metallic', 'retro', 'bar'],
+    defaultProps: {
+      trackTitle: 'SYNTHWAVE_O3_ATMOSPHERE.MP3',
+      artistName: 'ANALOG FREQUENCY LABS',
+      durationSeconds: 214,
+    },
+    propsSchema: [
+      {
+        name: 'trackTitle',
+        type: 'string',
+        defaultValue: 'SYNTHWAVE_O3_ATMOSPHERE.MP3',
+        description: 'Song / audio track title',
+      },
+      {
+        name: 'artistName',
+        type: 'string',
+        defaultValue: 'ANALOG FREQUENCY LABS',
+        description: 'Artist / band name label',
+      },
+      {
+        name: 'durationSeconds',
+        type: 'number',
+        defaultValue: 214,
+        description: 'Total track duration in seconds',
+      },
+    ],
+    codeSnippet: `<SkeuomorphicMediaBar
+  trackTitle="SYNTHWAVE_O3_ATMOSPHERE.MP3"
+  artistName="ANALOG FREQUENCY LABS"
+  durationSeconds={214}
+/>`,
+    component: (props: any) => React.createElement(
+      SkeuomorphicMediaBar,
+      {
+        trackTitle: props.trackTitle || 'SYNTHWAVE_O3_ATMOSPHERE.MP3',
+        artistName: props.artistName || 'ANALOG FREQUENCY LABS',
+        durationSeconds: props.durationSeconds || 214,
+      }
+    ),
+  },
+  {
+    id: 'skeuomorphic-toolbar',
+    name: 'Skeuomorphic App Sandbox Toolbar',
+    category: 'Navigation & Menus',
+    description: 'The app sandbox toolbar built entirely with UI controls from this sandbox (gear shift viewport selector, RotaryKnob zoom dial, ToggleSwitch canvas grid switch).',
+    tags: ['toolbar', 'app-shell', 'gearbox', 'knob', 'viewport', 'zoom', 'navigation'],
+    defaultProps: {
+      viewport: 'desktop',
+      showGrid: true,
+      zoom: 1,
+      backdrop: 'tech-grid',
+    },
+    propsSchema: [
+      {
+        name: 'viewport',
+        type: 'select',
+        defaultValue: 'desktop',
+        options: ['desktop', 'tablet', 'mobile'],
+        description: 'Active viewport gear state',
+      },
+      {
+        name: 'showGrid',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Canvas grid toggle switch state',
+      },
+    ],
+    codeSnippet: `<Toolbar
+  viewport="desktop"
+  onViewportChange={(mode) => console.log(mode)}
+  showGrid={true}
+  onToggleGrid={() => {}}
+  zoom={1}
+  onZoomChange={(z) => console.log(z)}
+  onResetZoom={() => {}}
+  backdrop="tech-grid"
+/>`,
+    component: (props: any) => React.createElement(
+      Toolbar,
+      {
+        viewport: props.viewport || 'desktop',
+        onViewportChange: () => {},
+        showGrid: props.showGrid !== undefined ? props.showGrid : true,
+        onToggleGrid: () => {},
+        zoom: props.zoom || 1,
+        onZoomChange: () => {},
+        onResetZoom: () => {},
+        backdrop: 'tech-grid',
+      }
+    ),
+  },
+  {
+    id: 'skeuomorphic-search-input',
+    name: 'Skeuomorphic Search Console',
+    category: 'Forms & Inputs',
+    description: 'Tactile skeuomorphic search console with a 3D metallic plate casing, glowing LCD marquee input field, and clear action button.',
+    tags: ['search', 'input', 'console', 'lcd', 'tactile', 'skeuomorphic', 'form'],
+    defaultProps: {
+      placeholder: 'SEARCH COMPONENTS...',
+      value: 'ROBOTICS',
+    },
+    propsSchema: [
+      {
+        name: 'placeholder',
+        type: 'string',
+        defaultValue: 'SEARCH COMPONENTS...',
+        description: 'LCD placeholder text label',
+      },
+      {
+        name: 'value',
+        type: 'string',
+        defaultValue: 'ROBOTICS',
+        description: 'Current search query text',
+      },
+    ],
+    codeSnippet: `<SearchInput value="ROBOTICS" onChange={(val) => console.log(val)} placeholder="SEARCH COMPONENTS..." />`,
+    component: (props: any) => React.createElement(
+      SearchInput,
+      {
+        value: props.value !== undefined ? props.value : 'ROBOTICS',
+        onChange: () => {},
+        placeholder: props.placeholder || 'SEARCH COMPONENTS...',
+      }
+    ),
+  },
+  {
+    id: 'analog-micro-plate-badge',
+    name: 'Analog Micro-Plate Badges',
+    category: 'Feedback & Indicators',
+    description: 'Physical analog micro-plates including embossed Dymo label tape, screwed corner tags, and stamped metal plates used across app badges and category chips.',
+    tags: ['badge', 'tag', 'plate', 'dymo', 'embossed', 'screwed', 'micro-plate', 'indicator'],
+    defaultProps: {
+      label: 'SYSTEM READY',
+      variant: 'embossed-tape',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'SYSTEM READY',
+        description: 'Text stamped on physical plate',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'embossed-tape',
+        options: ['embossed-tape', 'screwed-tag', 'metal-plate', 'primary'],
+        description: 'Micro-plate structural style',
+      },
+    ],
+    codeSnippet: `<Badge variant="embossed-tape" size="md">SYSTEM READY</Badge>`,
+    component: (props: any) => React.createElement(
+      Badge,
+      {
+        variant: props.variant || 'embossed-tape',
+        size: 'md',
+      },
+      props.label || 'SYSTEM READY'
+    ),
+  },
+  {
+    id: 'vertical-gearbox',
+    name: 'Vertical Gearbox Lever',
+    category: 'Buttons & Controls',
+    description: 'Tactile mechanical vertical gearbox control where users shift a lever along a vertical metallic track with detent clicks into gear positions (e.g. 1, 2, 3, 4, 5, R).',
+    tags: ['gearbox', 'gear', 'lever', 'transmission', 'shift', 'vertical', 'tactile', 'retro'],
+    defaultProps: {
+      label: 'TRANSMISSION GEARS',
+      variant: 'machined-steel',
+      defaultPosition: 0,
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'TRANSMISSION GEARS',
+        description: 'Header text displayed above gearbox casing',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'machined-steel',
+        options: ['machined-steel', 'dark-tactile', 'gold-vintage'],
+        description: 'Material finish of gearbox casing and lever knob',
+      },
+      {
+        name: 'defaultPosition',
+        type: 'number',
+        defaultValue: 0,
+        description: 'Initial active gear position index',
+      },
+    ],
+    codeSnippet: `<VerticalGearbox
+  label="TRANSMISSION GEARS"
+  positions={['1', '2', '3', '4', '5', 'R']}
+  variant="machined-steel"
+  defaultPosition={0}
+/>`,
+    component: (props: any) => React.createElement(
+      VerticalGearbox,
+      {
+        label: props.label || 'TRANSMISSION GEARS',
+        variant: props.variant || 'machined-steel',
+        defaultPosition: props.defaultPosition || 0,
+        positions: ['1', '2', '3', '4', '5', 'R'],
+      }
+    ),
+  },
+  {
+    id: 'media-transport-button',
+    name: 'Media Transport Button',
+    category: 'Buttons & Controls',
+    description: 'Standalone sunken molded transport button (play, pause, stop, rewind, record, power) with metallic finish and LED indicators.',
+    tags: ['media', 'transport', 'button', 'play', 'pause', 'stop', 'radio', 'skeuomorphic'],
+    defaultProps: {
+      type: 'play',
+      variant: 'metallic',
+      label: 'PLAY',
+      isActive: false,
+      ledColor: 'emerald',
+    },
+    propsSchema: [
+      {
+        name: 'type',
+        type: 'select',
+        defaultValue: 'play',
+        options: ['play', 'pause', 'stop', 'rewind', 'fastforward', 'record', 'power', 'custom'],
+        description: 'Transport control action type & icon',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'metallic',
+        options: ['metallic', 'dark-plastic', 'amber-glow', 'emerald-glow'],
+        description: 'Button finish scheme',
+      },
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'PLAY',
+        description: 'Button text label',
+      },
+      {
+        name: 'isActive',
+        type: 'boolean',
+        defaultValue: false,
+        description: 'Active toggled state',
+      },
+      {
+        name: 'ledColor',
+        type: 'select',
+        defaultValue: 'emerald',
+        options: ['emerald', 'amber', 'red', 'cyan'],
+        description: 'Status LED backlight color',
+      },
+    ],
+    codeSnippet: `<MediaTransportButton type="play" variant="metallic" label="PLAY" ledColor="emerald" />`,
+    component: (props: any) => React.createElement(
+      MediaTransportButton,
+      {
+        type: props.type || 'play',
+        variant: props.variant || 'metallic',
+        label: props.label || 'PLAY',
+        isActive: props.isActive !== undefined ? props.isActive : false,
+        ledColor: props.ledColor || 'emerald',
+      }
+    ),
+  },
+  {
+    id: 'analog-fader-slider',
+    name: 'Analog Fader Slider',
+    category: 'Buttons & Controls',
+    description: 'Tactile vertical/horizontal fader slider with extruded metallic thumb cap, sunken track groove, and scale tick markings.',
+    tags: ['fader', 'slider', 'volume', 'analog', 'equalizer', 'tactile', 'skeuomorphic'],
+    defaultProps: {
+      label: 'VOLUME',
+      orientation: 'vertical',
+      variant: 'brushed-silver',
+      defaultValue: 65,
+      unit: '%',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'VOLUME',
+        description: 'Header title text',
+      },
+      {
+        name: 'orientation',
+        type: 'select',
+        defaultValue: 'vertical',
+        options: ['vertical', 'horizontal'],
+        description: 'Slider track axis',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'brushed-silver',
+        options: ['brushed-silver', 'dark-tactile', 'gold-vintage'],
+        description: 'Thumb cap finish style',
+      },
+      {
+        name: 'defaultValue',
+        type: 'number',
+        defaultValue: 65,
+        description: 'Default percentage value (0 to 100)',
+      },
+    ],
+    codeSnippet: `<AnalogFaderSlider label="VOLUME" orientation="vertical" variant="brushed-silver" defaultValue={65} />`,
+    component: (props: any) => React.createElement(
+      AnalogFaderSlider,
+      {
+        label: props.label || 'VOLUME',
+        orientation: props.orientation || 'vertical',
+        variant: props.variant || 'brushed-silver',
+        defaultValue: props.defaultValue !== undefined ? props.defaultValue : 65,
+      }
+    ),
+  },
+  {
+    id: 'speaker-grille',
+    name: 'Speaker Mesh Vent Grille',
+    category: 'Cards & Containers',
+    description: 'Skeuomorphic audio mesh vent panel plate with customizable hole matrix patterns, metallic finish, and logo plate.',
+    tags: ['speaker', 'grille', 'mesh', 'vent', 'audio', 'radio', 'plate', 'skeuomorphic'],
+    defaultProps: {
+      label: 'HI-FI SPEAKER MESH',
+      pattern: 'mesh-dots',
+      variant: 'brushed-chrome',
+      logoText: 'HI-FI AUDIO',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'HI-FI SPEAKER MESH',
+        description: 'Header text above speaker frame',
+      },
+      {
+        name: 'pattern',
+        type: 'select',
+        defaultValue: 'mesh-dots',
+        options: ['mesh-dots', 'slotted-vents', 'honeycomb', 'vintage-woven'],
+        description: 'Hole/mesh vent pattern style',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'brushed-chrome',
+        options: ['brushed-chrome', 'dark-brass', 'black-satin', 'silver-matte'],
+        description: 'Outer bezel metal finish',
+      },
+      {
+        name: 'logoText',
+        type: 'string',
+        defaultValue: 'HI-FI AUDIO',
+        description: 'Text on center brand badge plate',
+      },
+    ],
+    codeSnippet: `<SpeakerGrille label="HI-FI SPEAKER MESH" pattern="mesh-dots" variant="brushed-chrome" logoText="HI-FI AUDIO" />`,
+    component: (props: any) => React.createElement(
+      SpeakerGrille,
+      {
+        label: props.label || 'HI-FI SPEAKER MESH',
+        pattern: props.pattern || 'mesh-dots',
+        variant: props.variant || 'brushed-chrome',
+        logoText: props.logoText || 'HI-FI AUDIO',
+      }
+    ),
+  },
+  {
+    id: 'retro-panel',
+    name: 'Retro 3D Irregular Panel Plate',
+    category: 'Cards & Containers',
+    description: '3D extruded industrial panel plate supporting multi-cut corner/edge configurations, organic curves, swoops, bevel edges, molded sockets, corner rivets, and technical backdrop patterns.',
+    tags: ['panel', 'card', '3d', 'irregular', 'cut', 'curves', 'swoop', 'retro', 'container', 'plate'],
+    defaultProps: {
+      title: 'RADAR AVIONICS PLATE',
+      panelId: 'PNL-409',
+      shape: 'swoop-bottom-left',
+      variant: 'silver-metallic',
+      showRivets: true,
+      showGridPattern: true,
+      isTransparent: false,
+      glassOpacity: 0.15,
+      windowLabel: '',
+      recessedSockets: true,
+    },
+    propsSchema: [
+      {
+        name: 'title',
+        type: 'string',
+        defaultValue: 'RADAR AVIONICS PLATE',
+        description: 'Header text displayed on plate',
+      },
+      {
+        name: 'panelId',
+        type: 'string',
+        defaultValue: 'PNL-409',
+        description: 'Technical ID code watermark',
+      },
+      {
+        name: 'shape',
+        type: 'select',
+        defaultValue: 'swoop-bottom-left',
+        options: [
+          'rectangle',
+          'cut-top-right',
+          'cut-top-left',
+          'cut-bottom-right',
+          'stepped-corner',
+          'hexagonal',
+          'notched-top',
+          'swoop-bottom-left',
+          'curved-notch',
+          'concave-inset',
+          'molded-pod',
+          'wave-top',
+        ],
+        description: 'Preset silhouette shape (straight cut or organic swooping curves)',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'silver-metallic',
+        options: [
+          'dark-steel',
+          'military-green',
+          'vintage-bakelite',
+          'brushed-aluminum',
+          'cockpit-teal',
+          'silver-metallic',
+        ],
+        description: 'Material finish style',
+      },
+      {
+        name: 'showRivets',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Render structural corner rivets',
+      },
+      {
+        name: 'showGridPattern',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Display background grid pattern',
+      },
+      {
+        name: 'isTransparent',
+        type: 'boolean',
+        defaultValue: false,
+        description: 'Render panel as transparent glass window',
+      },
+      {
+        name: 'windowLabel',
+        type: 'string',
+        defaultValue: '',
+        description: 'Glass window badge label banner',
+      },
+      {
+        name: 'recessedSockets',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Host child controls inside molded sunken socket pods',
+      },
+    ],
+    codeSnippet: `<RetroPanel
+  title="RADAR AVIONICS PLATE"
+  panelId="PNL-409"
+  shape="swoop-bottom-left"
+  variant="silver-metallic"
+  recessedSockets={true}
+>
+  <ToggleSwitch label="POWER" hasGuard={true} />
+  <RotaryKnob label="GAIN" size="md" style="cockpit" />
+</RetroPanel>`,
+    component: (props: any) => React.createElement(
+      RetroPanel,
+      {
+        title: props.title || 'RADAR AVIONICS PLATE',
+        panelId: props.panelId || 'PNL-409',
+        shape: props.shape || 'swoop-bottom-left',
+        variant: props.variant || 'silver-metallic',
+        showRivets: props.showRivets !== undefined ? props.showRivets : true,
+        showGridPattern: props.showGridPattern !== undefined ? props.showGridPattern : true,
+        isTransparent: props.isTransparent !== undefined ? props.isTransparent : false,
+        glassOpacity: props.glassOpacity !== undefined ? props.glassOpacity : 0.15,
+        windowLabel: props.windowLabel || '',
+        recessedSockets: props.recessedSockets !== undefined ? props.recessedSockets : true,
+      },
+      React.createElement(
+        'div',
+        { className: 'flex gap-6 items-center py-2' },
+        React.createElement(ToggleSwitch, { label: 'POWER', hasGuard: true }),
+        React.createElement(RotaryKnob, { label: 'GAIN', size: 'md', style: 'cockpit' })
+      )
+    ),
+  },
+  {
+    id: 'cockpit-control-panel',
+    name: 'Cockpit Avionics Panel',
+    category: 'Cards & Containers',
+    description: 'Heavy military & aircraft avionics panel featuring toggle switches with safety guards, cockpit bar knobs, dot matrix telemetry, and tactile triggers.',
+    tags: ['cockpit', 'aircraft', 'military', 'switch', 'knob', 'avionics', 'retro'],
+    defaultProps: {
+      panelTitle: 'AVIONICS & RADAR STROBE CONTROL',
+    },
+    propsSchema: [
+      {
+        name: 'panelTitle',
+        type: 'string',
+        defaultValue: 'AVIONICS & RADAR STROBE CONTROL',
+        description: 'Header text displayed on top of the avionics plate',
+      },
+    ],
+    codeSnippet: `<CockpitControlPanel panelTitle="AVIONICS & RADAR STROBE CONTROL" />`,
+    component: (props: any) => React.createElement(
+      CockpitControlPanel,
+      {
+        panelTitle: props.panelTitle || 'AVIONICS & RADAR STROBE CONTROL',
+      }
+    ),
+  },
+  {
+    id: 'vintage-audio-console',
+    name: 'Vintage Audio Machine',
+    category: 'Cards & Containers',
+    description: 'Complete vintage radio console mimicking analog audio machines with rotating knobs, dot matrix marquee screen, and tactile push buttons.',
+    tags: ['retro', 'audio', 'radio', 'machine', 'console', 'vintage'],
+    defaultProps: {
+      modelName: 'RETRO-SOUND DAB/FM',
+    },
+    propsSchema: [
+      {
+        name: 'modelName',
+        type: 'string',
+        defaultValue: 'RETRO-SOUND DAB/FM',
+        description: 'Brand model label title on the console',
+      },
+    ],
+    codeSnippet: `<VintageAudioConsole modelName="RETRO-SOUND DAB/FM" initialVolume={45} initialFrequency={98.5} />`,
+    component: (props: any) => React.createElement(
+      VintageAudioConsole,
+      {
+        modelName: props.modelName || 'RETRO-SOUND DAB/FM',
+      }
+    ),
+  },
+  {
+    id: 'tactile-push-button',
+    name: 'Tactile Push Button',
+    category: 'Buttons & Controls',
+    description: '3D mechanical push button with press-down depth animation, configurable texture dots, materials, LED indicators, shapes, and latching modes.',
+    tags: ['button', 'tactile', 'push', 'press', 'mechanical', 'retro', 'latching'],
+    defaultProps: {
+      children: 'SCAN',
+      label: 'SCAN',
+      sublabel: 'PLAY/PAUSE',
+      variant: 'cream',
+      shape: 'rectangular',
+      size: 'md',
+      showDots: false,
+      ledStatus: 'none',
+      isLatching: false,
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'SCAN',
+        description: 'Primary label text above button',
+      },
+      {
+        name: 'sublabel',
+        type: 'string',
+        defaultValue: 'PLAY/PAUSE',
+        description: 'Secondary caption under primary label',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'cream',
+        options: ['cream', 'silver', 'wood', 'dark-slate', 'brass', 'military'],
+        description: 'Material finish style',
+      },
+      {
+        name: 'shape',
+        type: 'select',
+        defaultValue: 'rectangular',
+        options: ['rectangular', 'square', 'pill'],
+        description: 'Button cap shape',
+      },
+      {
+        name: 'size',
+        type: 'select',
+        defaultValue: 'md',
+        options: ['sm', 'md', 'lg', 'xl'],
+        description: 'Button physical dimensions',
+      },
+      {
+        name: 'showDots',
+        type: 'boolean',
+        defaultValue: false,
+        description: 'Show background dot pattern on button cap',
+      },
+      {
+        name: 'ledStatus',
+        type: 'select',
+        defaultValue: 'none',
+        options: ['none', 'green', 'red', 'amber'],
+        description: 'Integrated LED indicator status',
+      },
+      {
+        name: 'isLatching',
+        type: 'boolean',
+        defaultValue: false,
+        description: 'Enable push-on / push-off toggle latch behavior',
+      },
+    ],
+    codeSnippet: `<TactilePushButton
+  label="SCAN"
+  sublabel="PLAY/PAUSE"
+  variant="cream"
+  shape="rectangular"
+  size="md"
+  showDots={false}
+  ledStatus="none"
+>
+  SCAN
+</TactilePushButton>`,
+    component: (props: any) => React.createElement(
+      TactilePushButton,
+      {
+        label: props.label !== undefined ? props.label : 'SCAN',
+        sublabel: props.sublabel !== undefined ? props.sublabel : 'PLAY/PAUSE',
+        variant: props.variant || 'cream',
+        shape: props.shape || 'rectangular',
+        size: props.size || 'md',
+        showDots: props.showDots !== undefined ? props.showDots : false,
+        ledStatus: props.ledStatus || 'none',
+        isLatching: props.isLatching !== undefined ? props.isLatching : false,
+      },
+      props.children || 'SCAN'
+    ),
+  },
+  {
+    id: 'rotary-knob',
+    name: 'Rotary Dial Knob',
+    category: 'Buttons & Controls',
+    description: 'Interactive rotary dial knob with fluid drag physics (radial angle + vertical drag), cockpit bar handle styles, detents, and multiple physical scales.',
+    tags: ['knob', 'rotary', 'dial', 'volume', 'tuning', 'cockpit', 'control'],
+    defaultProps: {
+      label: 'VOLUME',
+      size: 'md',
+      style: 'ribbed',
+      variant: 'amber-gold',
+      min: 0,
+      max: 100,
+      defaultValue: 65,
+      unit: '%',
+      showValue: true,
+      showScale: true,
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'VOLUME',
+        description: 'Knob header label',
+      },
+      {
+        name: 'size',
+        type: 'select',
+        defaultValue: 'md',
+        options: ['sm', 'md', 'lg', 'xl', '2xl'],
+        description: 'Physical knob diameter',
+      },
+      {
+        name: 'style',
+        type: 'select',
+        defaultValue: 'ribbed',
+        options: ['ribbed', 'cockpit', 'pointer', 'classic'],
+        description: 'Cap handle & pointer styling',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'amber-gold',
+        options: ['amber-gold', 'silver-aluminum', 'dark-bakelite', 'military-grey'],
+        description: 'Material finish color scheme',
+      },
+      {
+        name: 'showValue',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Display numeric value readout box below knob',
+      },
+      {
+        name: 'showScale',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Display dial tick marks scale around knob',
+      },
+      {
+        name: 'minAngle',
+        type: 'number',
+        defaultValue: -135,
+        description: 'Starting rotation angle in degrees for min value',
+      },
+      {
+        name: 'maxAngle',
+        type: 'number',
+        defaultValue: 135,
+        description: 'Ending rotation angle in degrees for max value',
+      },
+    ],
+    codeSnippet: `<RotaryKnob label="VOLUME" size="md" style="ribbed" variant="amber-gold" min={0} max={100} defaultValue={65} unit="%" />`,
+    component: (props: any) => React.createElement(
+      RotaryKnob,
+      {
+        label: props.label || 'VOLUME',
+        size: props.size || 'md',
+        style: props.style || 'ribbed',
+        variant: props.variant || 'amber-gold',
+        min: 0,
+        max: 100,
+        defaultValue: 65,
+        unit: '%',
+        showValue: props.showValue !== undefined ? props.showValue : true,
+        showScale: props.showScale !== undefined ? props.showScale : true,
+        minAngle: props.minAngle !== undefined ? props.minAngle : -135,
+        maxAngle: props.maxAngle !== undefined ? props.maxAngle : 135,
+      }
+    ),
+  },
+  {
+    id: 'toggle-switch',
+    name: 'Cockpit Toggle Switch',
+    category: 'Buttons & Controls',
+    description: 'Heavy metal flip switch lever mounted on a dark screw plate with LED lights and optional red safety guard.',
+    tags: ['toggle', 'switch', 'flip', 'military', 'cockpit', 'control'],
+    defaultProps: {
+      label: 'STROBE POWER',
+      sublabel: 'SYSTEM ON/OFF',
+      size: 'md',
+      variant: 'chrome',
+      hasGuard: false,
+      ledStatus: 'amber',
+      onLabel: 'ON',
+      offLabel: 'OFF',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'STROBE POWER',
+        description: 'Header title text',
+      },
+      {
+        name: 'sublabel',
+        type: 'string',
+        defaultValue: 'SYSTEM ON/OFF',
+        description: 'Caption below switch plate',
+      },
+      {
+        name: 'size',
+        type: 'select',
+        defaultValue: 'md',
+        options: ['sm', 'md', 'lg'],
+        description: 'Switch size scale',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'chrome',
+        options: ['chrome', 'brass', 'black-tactical', 'vintage-grey'],
+        description: 'Lever finish style',
+      },
+      {
+        name: 'hasGuard',
+        type: 'boolean',
+        defaultValue: false,
+        description: 'Show protective safety guard overlay',
+      },
+      {
+        name: 'ledStatus',
+        type: 'select',
+        defaultValue: 'amber',
+        options: ['none', 'green', 'red', 'amber'],
+        description: 'Status indicator LED color',
+      },
+    ],
+    codeSnippet: `<ToggleSwitch label="STROBE POWER" variant="chrome" size="md" hasGuard={false} ledStatus="amber" />`,
+    component: (props: any) => React.createElement(
+      ToggleSwitch,
+      {
+        label: props.label || 'STROBE POWER',
+        sublabel: props.sublabel || 'SYSTEM ON/OFF',
+        size: props.size || 'md',
+        variant: props.variant || 'chrome',
+        hasGuard: props.hasGuard !== undefined ? props.hasGuard : false,
+        ledStatus: props.ledStatus || 'amber',
+        onLabel: props.onLabel || 'ON',
+        offLabel: props.offLabel || 'OFF',
+      }
+    ),
+  },
+  {
+    id: 'dot-matrix-display',
+    name: 'Dot Matrix LCD Display',
+    category: 'Data Display',
+    description: 'Warm glowing dot matrix marquee LCD screen with animated right-to-left scrolling text, LED grid overlay, and multi-line information layers.',
+    tags: ['display', 'lcd', 'dot-matrix', 'marquee', 'text', 'screen'],
+    defaultProps: {
+      color: 'amber',
+      title: 'DAB RADIO DISPLAY',
+      fontSize: 'sm',
+      showDotsGrid: true,
+      showFrameBorder: true,
+      scrollSpeed: 1,
+    },
+    propsSchema: [
+      {
+        name: 'title',
+        type: 'string',
+        defaultValue: 'DAB RADIO DISPLAY',
+        description: 'Display frame label header',
+      },
+      {
+        name: 'color',
+        type: 'select',
+        defaultValue: 'amber',
+        options: ['amber', 'green', 'cyan', 'red', 'vfd-blue'],
+        description: 'LCD backlight color scheme',
+      },
+      {
+        name: 'fontSize',
+        type: 'select',
+        defaultValue: 'sm',
+        options: ['xs', 'sm', 'md', 'lg'],
+        description: 'Text font size scale',
+      },
+      {
+        name: 'showDotsGrid',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Overlay LED dot matrix background pattern',
+      },
+      {
+        name: 'showFrameBorder',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Show outer glowing bezel frame border',
+      },
+      {
+        name: 'scrollSpeed',
+        type: 'number',
+        defaultValue: 1,
+        description: 'Marquee text scroll speed (0 for static)',
+      },
+    ],
+    codeSnippet: `<DotMatrixDisplay color="amber" title="DAB RADIO DISPLAY" fontSize="sm" showDotsGrid={true} />`,
+    component: (props: any) => React.createElement(
+      DotMatrixDisplay,
+      {
+        color: props.color || 'amber',
+        title: props.title || 'DAB RADIO DISPLAY',
+        fontSize: props.fontSize || 'sm',
+        showDotsGrid: props.showDotsGrid !== undefined ? props.showDotsGrid : true,
+        showFrameBorder: props.showFrameBorder !== undefined ? props.showFrameBorder : true,
+        scrollSpeed: props.scrollSpeed !== undefined ? props.scrollSpeed : 1,
+      }
+    ),
+  },
+  {
+    id: 'interactive-button',
+    name: 'Action Button',
+    category: 'Buttons & Controls',
+    description: 'Customizable action button supporting multiple styles, sizes, and icon integration.',
+    tags: ['button', 'interactive', 'control', 'action'],
+    defaultProps: {
+      label: 'Explore Sandbox',
+      variant: 'primary',
+      size: 'md',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'Explore Sandbox',
+        description: 'Text label displayed inside the button',
+      },
+    ],
+    codeSnippet: `<Button variant="primary" size="md">
+  Explore Sandbox
+</Button>`,
+    component: (props: any) => React.createElement(
+      Button,
+      {
+        variant: props.variant || 'primary',
+        size: props.size || 'md',
+        icon: React.createElement(Sparkles, { className: 'w-4 h-4' }),
+      },
+      props.label || 'Action Button'
+    ),
+  },
+];
