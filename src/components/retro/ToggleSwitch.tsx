@@ -12,6 +12,8 @@ export interface ToggleSwitchProps {
   size?: ToggleSize;
   variant?: ToggleVariant;
   hasGuard?: boolean;
+  isGuardOpen?: boolean;
+  onGuardToggle?: (isOpen: boolean) => void;
   ledStatus?: 'none' | 'green' | 'red' | 'amber';
   onLabel?: string;
   offLabel?: string;
@@ -27,15 +29,42 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   size = 'md',
   variant = 'chrome',
   hasGuard = false,
+  isGuardOpen: controlledGuardOpen,
+  onGuardToggle,
   ledStatus = 'amber',
   onLabel = 'ON',
   offLabel = 'OFF',
   className = '',
 }) => {
   const [internalChecked, setInternalChecked] = useState(defaultChecked);
+  const [internalGuardOpen, setInternalGuardOpen] = useState(false);
+
   const isChecked = controlledChecked !== undefined ? controlledChecked : internalChecked;
+  const guardOpen = controlledGuardOpen !== undefined ? controlledGuardOpen : internalGuardOpen;
+
+  const toggleGuard = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const nextGuard = !guardOpen;
+    if (controlledGuardOpen === undefined) {
+      setInternalGuardOpen(nextGuard);
+    }
+    if (onGuardToggle) {
+      onGuardToggle(nextGuard);
+    }
+  };
 
   const handleToggle = () => {
+    if (hasGuard && !guardOpen) {
+      // Security guard is closed; clicking switch opens guard first
+      if (controlledGuardOpen === undefined) {
+        setInternalGuardOpen(true);
+      }
+      if (onGuardToggle) {
+        onGuardToggle(true);
+      }
+      return;
+    }
+
     const nextState = !isChecked;
     if (controlledChecked === undefined) {
       setInternalChecked(nextState);
@@ -111,12 +140,20 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
           </div>
         </div>
 
-        {/* Optional Red Safety Guard */}
+        {/* Interactive Red Safety Guard Cover */}
         {hasGuard && (
-          <div className="absolute inset-x-1 top-2 bottom-2 rounded border-2 border-rose-600/60 bg-rose-950/20 pointer-events-none z-30 flex items-center justify-center">
-            <span className="text-[7px] font-mono text-rose-500 font-bold uppercase tracking-tighter rotate-90">
-              SAFETY
+          <div
+            onClick={toggleGuard}
+            title={guardOpen ? "Click to close safety guard" : "Click to open safety guard"}
+            className={`absolute inset-x-1 top-1.5 bottom-1.5 rounded-md border-2 border-rose-600/90 bg-gradient-to-b from-rose-900/90 via-rose-950/95 to-red-950 shadow-[0_4px_12px_rgba(225,29,72,0.4)] z-30 flex flex-col items-center justify-between p-1 transition-all duration-300 ease-out origin-top cursor-pointer group ${
+              guardOpen ? '-rotate-90 opacity-20 translate-x-10 scale-90 pointer-events-auto' : 'rotate-0 opacity-100 pointer-events-auto hover:border-rose-400'
+            }`}
+          >
+            <div className="w-full h-1 bg-rose-500/80 rounded-full" />
+            <span className="text-[7px] font-mono text-rose-200 font-extrabold uppercase tracking-widest text-center my-auto drop-shadow-sm group-hover:text-white">
+              {guardOpen ? 'UNLOCKED' : 'SAFETY COVER'}
             </span>
+            <div className="w-2 h-2 rounded-full border border-rose-400 bg-rose-600 shadow-inner" />
           </div>
         )}
 
