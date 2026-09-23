@@ -1,11 +1,168 @@
 import React from 'react';
 import { UIComponentItem } from '../types/sandbox';
 import { Button } from '../components/common/Button';
-import { Badge } from '../components/common/Badge';
-import { Card } from '../components/common/Card';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { TactilePushButton } from '../components/retro/TactilePushButton';
+import { RotaryKnob } from '../components/retro/RotaryKnob';
+import { DotMatrixDisplay } from '../components/retro/DotMatrixDisplay';
+import { VintageAudioConsole } from '../components/retro/VintageAudioConsole';
+import { Sparkles } from 'lucide-react';
 
 export const COMPONENT_REGISTRY: UIComponentItem[] = [
+  {
+    id: 'vintage-audio-console',
+    name: 'Vintage Audio Machine',
+    category: 'Cards & Containers',
+    description: 'Complete vintage radio console mimicking analog audio machines with rotating knobs, dot matrix marquee screen, and tactile push buttons.',
+    tags: ['retro', 'audio', 'radio', 'machine', 'console', 'vintage'],
+    defaultProps: {
+      modelName: 'RETRO-SOUND DAB/FM',
+      initialVolume: 45,
+      initialFrequency: 98.5,
+    },
+    propsSchema: [
+      {
+        name: 'modelName',
+        type: 'string',
+        defaultValue: 'RETRO-SOUND DAB/FM',
+        description: 'Brand model label title on the console',
+      },
+    ],
+    codeSnippet: `<VintageAudioConsole modelName="RETRO-SOUND DAB/FM" initialVolume={45} initialFrequency={98.5} />`,
+    component: (props: any) => React.createElement(
+      VintageAudioConsole,
+      {
+        modelName: props.modelName || 'RETRO-SOUND DAB/FM',
+      }
+    ),
+  },
+  {
+    id: 'tactile-push-button',
+    name: 'Tactile Push Button',
+    category: 'Buttons & Controls',
+    description: '3D mechanical push button with realistic press-down depth animation, bevel highlights, and vintage audio aesthetic.',
+    tags: ['button', 'tactile', 'push', 'press', 'mechanical', 'retro'],
+    defaultProps: {
+      children: 'SCAN',
+      label: 'SCAN',
+      sublabel: 'PLAY/PAUSE',
+      color: 'cream',
+    },
+    propsSchema: [
+      {
+        name: 'children',
+        type: 'string',
+        defaultValue: 'SCAN',
+        description: 'Button cap text',
+      },
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'SCAN',
+        description: 'Primary label above button',
+      },
+      {
+        name: 'sublabel',
+        type: 'string',
+        defaultValue: 'PLAY/PAUSE',
+        description: 'Secondary caption under label',
+      },
+      {
+        name: 'color',
+        type: 'select',
+        defaultValue: 'cream',
+        options: ['cream', 'silver'],
+        description: 'Material finish color',
+      },
+    ],
+    codeSnippet: `<TactilePushButton label="SCAN" sublabel="PLAY/PAUSE" color="cream">
+  SCAN
+</TactilePushButton>`,
+    component: (props: any) => React.createElement(
+      TactilePushButton,
+      {
+        label: props.label || 'SCAN',
+        sublabel: props.sublabel || 'PLAY/PAUSE',
+        color: props.color || 'cream',
+      },
+      props.children || 'SCAN'
+    ),
+  },
+  {
+    id: 'rotary-knob',
+    name: 'Rotary Dial Knob',
+    category: 'Buttons & Controls',
+    description: 'Interactive rotary knob with drag, scroll-wheel, or click interaction, tick mark scale, and rotation angle indicator.',
+    tags: ['knob', 'rotary', 'dial', 'volume', 'tuning', 'control'],
+    defaultProps: {
+      label: 'VOLUME',
+      min: 0,
+      max: 100,
+      defaultValue: 65,
+      size: 'md',
+      unit: '%',
+    },
+    propsSchema: [
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: 'VOLUME',
+        description: 'Knob title label',
+      },
+      {
+        name: 'size',
+        type: 'select',
+        defaultValue: 'md',
+        options: ['sm', 'md', 'lg'],
+        description: 'Knob size scale',
+      },
+    ],
+    codeSnippet: `<RotaryKnob label="VOLUME" min={0} max={100} defaultValue={65} unit="%" />`,
+    component: (props: any) => React.createElement(
+      RotaryKnob,
+      {
+        label: props.label || 'VOLUME',
+        size: props.size || 'md',
+        min: 0,
+        max: 100,
+        defaultValue: 65,
+        unit: '%',
+      }
+    ),
+  },
+  {
+    id: 'dot-matrix-display',
+    name: 'Dot Matrix LCD Display',
+    category: 'Data Display',
+    description: 'Warm glowing dot matrix marquee LCD screen with animated right-to-left scrolling text and multi-line information layers.',
+    tags: ['display', 'lcd', 'dot-matrix', 'marquee', 'text', 'screen'],
+    defaultProps: {
+      color: 'amber',
+      title: 'DAB RADIO DISPLAY',
+    },
+    propsSchema: [
+      {
+        name: 'title',
+        type: 'string',
+        defaultValue: 'DAB RADIO DISPLAY',
+        description: 'Display frame label header',
+      },
+      {
+        name: 'color',
+        type: 'select',
+        defaultValue: 'amber',
+        options: ['amber', 'green', 'cyan', 'red'],
+        description: 'LCD backlight dot color',
+      },
+    ],
+    codeSnippet: `<DotMatrixDisplay color="amber" title="DAB RADIO DISPLAY" />`,
+    component: (props: any) => React.createElement(
+      DotMatrixDisplay,
+      {
+        color: props.color || 'amber',
+        title: props.title || 'DAB RADIO DISPLAY',
+      }
+    ),
+  },
   {
     id: 'interactive-button',
     name: 'Action Button',
@@ -24,20 +181,6 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
         defaultValue: 'Explore Sandbox',
         description: 'Text label displayed inside the button',
       },
-      {
-        name: 'variant',
-        type: 'select',
-        defaultValue: 'primary',
-        options: ['primary', 'secondary', 'outline', 'ghost', 'danger'],
-        description: 'Visual theme style variant',
-      },
-      {
-        name: 'size',
-        type: 'select',
-        defaultValue: 'md',
-        options: ['sm', 'md', 'lg'],
-        description: 'Component scale size',
-      },
     ],
     codeSnippet: `<Button variant="primary" size="md">
   Explore Sandbox
@@ -50,97 +193,6 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
         icon: React.createElement(Sparkles, { className: 'w-4 h-4' }),
       },
       props.label || 'Action Button'
-    ),
-  },
-  {
-    id: 'status-badge-set',
-    name: 'Status Badge Set',
-    category: 'Feedback & Indicators',
-    description: 'Compact presentational badges for displaying system, entity, or workflow statuses.',
-    tags: ['badge', 'status', 'tag', 'indicator'],
-    defaultProps: {
-      statusText: 'Active System',
-      variant: 'success',
-    },
-    propsSchema: [
-      {
-        name: 'statusText',
-        type: 'string',
-        defaultValue: 'Active System',
-        description: 'Status label text',
-      },
-      {
-        name: 'variant',
-        type: 'select',
-        defaultValue: 'success',
-        options: ['default', 'primary', 'success', 'warning', 'danger', 'outline'],
-        description: 'Color theme variant',
-      },
-    ],
-    codeSnippet: `<Badge variant="success" size="md">
-  Active System
-</Badge>`,
-    component: (props: any) => React.createElement(
-      'div',
-      { className: 'flex items-center gap-2' },
-      React.createElement(
-        Badge,
-        { variant: props.variant || 'success', size: 'md' },
-        props.statusText || 'Active System'
-      ),
-      React.createElement(
-        Badge,
-        { variant: 'primary', size: 'md' },
-        'Live'
-      )
-    ),
-  },
-  {
-    id: 'feature-card',
-    name: 'Feature Spotlight Card',
-    category: 'Cards & Containers',
-    description: 'Encapsulated card container designed for highlighting key product features or ideas.',
-    tags: ['card', 'container', 'feature', 'box'],
-    defaultProps: {
-      title: 'UI Idea Sandbox',
-      subtitle: 'Component Architecture',
-    },
-    propsSchema: [
-      {
-        name: 'title',
-        type: 'string',
-        defaultValue: 'UI Idea Sandbox',
-        description: 'Card title heading',
-      },
-      {
-        name: 'subtitle',
-        type: 'string',
-        defaultValue: 'Component Architecture',
-        description: 'Subheading caption',
-      },
-    ],
-    codeSnippet: `<Card title="UI Idea Sandbox" subtitle="Component Architecture">
-  <p className="text-xs text-slate-300">Modular sandbox ready for testing innovative UI concepts.</p>
-</Card>`,
-    component: (props: any) => React.createElement(
-      Card,
-      {
-        title: props.title || 'UI Idea Sandbox',
-        subtitle: props.subtitle || 'Component Architecture',
-        headerAction: React.createElement(Badge, { variant: 'primary' }, 'New'),
-        footer: React.createElement(
-          'div',
-          { className: 'flex items-center justify-between text-xs text-slate-400 w-full' },
-          React.createElement('span', null, 'Updated today'),
-          React.createElement(ArrowRight, { className: 'w-3.5 h-3.5 text-indigo-400' })
-        ),
-        className: 'w-80',
-      },
-      React.createElement(
-        'p',
-        { className: 'text-xs text-slate-300 leading-relaxed' },
-        'Cleanly divided atomic components designed for rapid prototyping, presentational showcases, and visual ideation.'
-      )
     ),
   },
 ];
