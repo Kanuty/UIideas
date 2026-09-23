@@ -5,11 +5,88 @@ import { TactilePushButton } from '../components/retro/TactilePushButton';
 import { RotaryKnob } from '../components/retro/RotaryKnob';
 import { DotMatrixDisplay } from '../components/retro/DotMatrixDisplay';
 import { ToggleSwitch } from '../components/retro/ToggleSwitch';
+import { RetroPanel } from '../components/retro/RetroPanel';
 import { VintageAudioConsole } from '../components/retro/VintageAudioConsole';
 import { CockpitControlPanel } from '../components/retro/CockpitControlPanel';
 import { Sparkles } from 'lucide-react';
 
 export const COMPONENT_REGISTRY: UIComponentItem[] = [
+  {
+    id: 'retro-panel',
+    name: 'Retro 3D Irregular Panel Plate',
+    category: 'Cards & Containers',
+    description: '3D extruded industrial panel plate with irregular polygon cuts, bevel edges, corner rivets, and technical backdrop patterns for hosting controls.',
+    tags: ['panel', 'card', '3d', 'irregular', 'cut', 'retro', 'container', 'plate'],
+    defaultProps: {
+      title: 'RADAR AVIONICS PLATE',
+      panelId: 'PNL-409',
+      shape: 'cut-top-right',
+      variant: 'dark-steel',
+      showRivets: true,
+      showGridPattern: true,
+    },
+    propsSchema: [
+      {
+        name: 'title',
+        type: 'string',
+        defaultValue: 'RADAR AVIONICS PLATE',
+        description: 'Header text displayed on plate',
+      },
+      {
+        name: 'panelId',
+        type: 'string',
+        defaultValue: 'PNL-409',
+        description: 'Technical ID code watermark',
+      },
+      {
+        name: 'shape',
+        type: 'select',
+        defaultValue: 'cut-top-right',
+        options: ['rectangle', 'cut-top-right', 'cut-top-left', 'cut-bottom-right', 'stepped-corner', 'hexagonal', 'notched-top'],
+        description: 'Irregular 3D polygon silhouette shape',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        defaultValue: 'dark-steel',
+        options: ['dark-steel', 'military-green', 'vintage-bakelite', 'brushed-aluminum', 'cockpit-teal'],
+        description: 'Material finish style',
+      },
+      {
+        name: 'showRivets',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Render structural corner rivets',
+      },
+      {
+        name: 'showGridPattern',
+        type: 'boolean',
+        defaultValue: true,
+        description: 'Display background grid pattern',
+      },
+    ],
+    codeSnippet: `<RetroPanel title="RADAR AVIONICS PLATE" panelId="PNL-409" shape="cut-top-right" variant="dark-steel">
+  <ToggleSwitch label="POWER" hasGuard={true} />
+  <RotaryKnob label="GAIN" size="md" style="cockpit" />
+</RetroPanel>`,
+    component: (props: any) => React.createElement(
+      RetroPanel,
+      {
+        title: props.title || 'RADAR AVIONICS PLATE',
+        panelId: props.panelId || 'PNL-409',
+        shape: props.shape || 'cut-top-right',
+        variant: props.variant || 'dark-steel',
+        showRivets: props.showRivets !== undefined ? props.showRivets : true,
+        showGridPattern: props.showGridPattern !== undefined ? props.showGridPattern : true,
+      },
+      React.createElement(
+        'div',
+        { className: 'flex gap-6 items-center py-2' },
+        React.createElement(ToggleSwitch, { label: 'POWER', hasGuard: true }),
+        React.createElement(RotaryKnob, { label: 'GAIN', size: 'md', style: 'cockpit' })
+      )
+    ),
+  },
   {
     id: 'cockpit-control-panel',
     name: 'Cockpit Avionics Panel',
