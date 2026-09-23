@@ -101,13 +101,13 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
 
           {/* Heavy Lever */}
           <div
-            className={`relative ${sizeStyles.lever} rounded-full border ${leverStyles} transition-transform duration-150 ease-out origin-bottom z-20`}
+            className={`relative ${sizeStyles.lever} rounded-full border ${leverStyles} transition-transform duration-200 cubic-bezier(0.34, 1.56, 0.64, 1) z-20`}
             style={{
-              transform: isChecked ? 'rotate(0deg) translateY(-25%) scaleY(1.1)' : 'rotate(180deg) translateY(-25%) scaleY(1.1)',
+              transform: isChecked ? 'translateY(-30%) scaleY(1.05)' : 'translateY(30%) scaleY(1.05)',
             }}
           >
             {/* Lever ball tip */}
-            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-slate-200 border border-slate-400 shadow-sm" />
+            <div className={`absolute ${isChecked ? '-top-1.5' : '-bottom-1.5'} left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-slate-100 border border-slate-400 shadow-md transition-all duration-200`} />
           </div>
         </div>
 

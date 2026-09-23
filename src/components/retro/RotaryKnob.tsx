@@ -68,9 +68,29 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
     }
   };
 
+  const hasMoved = useRef(false);
+
+  const calculateValFromEvent = (e: MouseEvent | React.MouseEvent) => {
+    if (!knobRef.current) return value;
+    const rect = knobRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const dx = e.clientX - centerX;
+    const dy = e.clientY - centerY;
+
+    let angle = (Math.atan2(dy, dx) * 180) / Math.PI + 90; // 0 deg is top
+    if (angle > 180) angle -= 360;
+
+    let clampedAngle = Math.min(135, Math.max(-135, angle));
+    const norm = (clampedAngle + 135) / 270;
+    return min + norm * (max - min);
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     isDragging.current = true;
+    hasMoved.current = false;
     startPos.current = { x: e.clientX, y: e.clientY, val: value };
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
@@ -79,27 +99,23 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
   const handleMouseMove = (e: MouseEvent) => {
     if (!isDragging.current || !knobRef.current) return;
 
+    const distMoved = Math.hypot(e.clientX - startPos.current.x, e.clientY - startPos.current.y);
+    if (distMoved > 3) {
+      hasMoved.current = true;
+    }
+
     const rect = knobRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
 
-    // Use angle-based calculation if cursor is outside deadzone, else vertical delta
     const dx = e.clientX - centerX;
     const dy = e.clientY - centerY;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (dist > 15) {
-      // Calculate angle from 6-o'clock position (-135° to +135°)
-      let angle = (Math.atan2(dy, dx) * 180) / Math.PI + 90; // 0 deg is top
-      if (angle > 180) angle -= 360;
-
-      // Clamp angle between -135 and 135
-      let clampedAngle = Math.min(135, Math.max(-135, angle));
-      const norm = (clampedAngle + 135) / 270;
-      const targetVal = min + norm * (max - min);
+    if (dist > 12) {
+      const targetVal = calculateValFromEvent(e);
       updateValue(targetVal);
     } else {
-      // Sensitivity scaled by size so small knobs drag just as easily
       const deltaY = startPos.current.y - e.clientY;
       const range = max - min;
       const sensitivity = 0.8;
@@ -108,7 +124,12 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: MouseEvent) => {
+    if (isDragging.current && !hasMoved.current) {
+      // Direct click on dial
+      const targetVal = calculateValFromEvent(e);
+      updateValue(targetVal);
+    }
     isDragging.current = false;
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('mouseup', handleMouseUp);
@@ -173,11 +194,13 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
         className={`relative ${sizeClasses.container} flex items-center justify-center rounded-full bg-stone-950 p-2 shadow-2xl border border-stone-800 cursor-grab active:cursor-grabbing`}
       >
         {showScale && (
-          <div className="absolute inset-0 rounded-full flex items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 rounded-full flex items-center justify-center pointer-events-none z-20">
             {Array.from({ length: totalTicks }).map((_, i) => {
               const angle = -135 + (i / (totalTicks - 1)) * 270;
               const isMajor = i === 0 || i === totalTicks - 1 || i % Math.max(1, Math.floor(totalTicks / 4)) === 0;
               const customLabel = scaleLabels && scaleLabels[i];
+
+              const tickVal = min + (i / (totalTicks - 1)) * (max - min);
 
               return (
                 <div
@@ -185,15 +208,24 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
                   className="absolute w-full h-full flex justify-center items-start pt-0.5"
                   style={{ transform: `rotate(${angle}deg)` }}
                 >
-                  <div className={`w-0.5 ${isMajor ? 'h-2 bg-amber-400/90' : 'h-1 bg-stone-600'}`} />
-                  {customLabel && (
-                    <span
-                      className="absolute top-2.5 text-[8px] font-mono text-stone-300 font-bold tracking-tighter"
-                      style={{ transform: `rotate(${-angle}deg)` }}
-                    >
-                      {customLabel}
-                    </span>
-                  )}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateValue(tickVal);
+                    }}
+                    className="pointer-events-auto focus:outline-none flex flex-col items-center group cursor-pointer"
+                  >
+                    <div className={`w-0.5 ${isMajor ? 'h-2.5 bg-amber-400 group-hover:bg-amber-300 group-hover:scale-125' : 'h-1.5 bg-stone-600 group-hover:bg-amber-400'} transition-all`} />
+                    {customLabel && (
+                      <span
+                        className="absolute top-3 text-[8px] font-mono text-stone-300 font-bold tracking-tighter group-hover:text-amber-300 transition-colors"
+                        style={{ transform: `rotate(${-angle}deg)` }}
+                      >
+                        {customLabel}
+                      </span>
+                    )}
+                  </button>
                 </div>
               );
             })}
@@ -201,10 +233,10 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
         )}
 
         <div
-          className={`relative ${sizeClasses.knob} rounded-full ${variantStyles.outer} shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_6px_12px_rgba(0,0,0,0.7)] flex items-center justify-center border`}
+          className={`relative ${sizeClasses.knob} rounded-full ${variantStyles.outer} shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_6px_12px_rgba(0,0,0,0.7)] flex items-center justify-center border z-10`}
           style={{
             transform: `rotate(${rotationAngle}deg)`,
-            transition: isDragging.current ? 'none' : 'transform 75ms ease-out',
+            transition: isDragging.current ? 'none' : 'transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
         >
           {style === 'ribbed' && (
