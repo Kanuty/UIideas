@@ -10,3 +10,4 @@ export * from './MediaTransportButton';
 export * from './AnalogFaderSlider';
 export * from './SpeakerGrille';
 export * from './VerticalGearbox';
+export * from './ChainedDropdown';

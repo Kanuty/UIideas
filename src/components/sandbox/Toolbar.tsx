@@ -3,7 +3,9 @@ import { ViewportMode } from '../../types/sandbox';
 import { CanvasBackdrop } from './Canvas';
 import { RotaryKnob } from '../retro/RotaryKnob';
 import { ToggleSwitch } from '../retro/ToggleSwitch';
-import { Monitor, Tablet, Smartphone, Palette } from 'lucide-react';
+import { VerticalGearbox } from '../retro/VerticalGearbox';
+import { ChainedDropdown } from '../retro/ChainedDropdown';
+import { Monitor, Palette } from 'lucide-react';
 
 export interface ToolbarProps {
   viewport: ViewportMode;
@@ -15,7 +17,18 @@ export interface ToolbarProps {
   onResetZoom: () => void;
   backdrop?: CanvasBackdrop;
   onBackdropChange?: (backdrop: CanvasBackdrop) => void;
+  theme?: 'dark' | 'light';
 }
+
+const VIEWPORT_MODES: ViewportMode[] = ['desktop', 'tablet', 'mobile'];
+
+const BACKDROP_OPTIONS = [
+  { value: 'tech-grid', label: 'Tech Dark Grid', badge: 'GRID' },
+  { value: 'grass-field', label: 'Grass XP Meadow', badge: 'XP' },
+  { value: 'brushed-workbench', label: 'Workbench Metal', badge: 'METAL' },
+  { value: 'blueprint', label: 'Cyan Blueprint', badge: 'CAD' },
+  { value: 'dark-slate', label: 'Dark Slate', badge: 'SLATE' },
+];
 
 export const Toolbar: React.FC<ToolbarProps> = ({
   viewport,
@@ -27,47 +40,50 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onResetZoom,
   backdrop = 'tech-grid',
   onBackdropChange,
+  theme = 'dark',
 }) => {
-  return (
-    <div className="bg-gradient-to-b from-stone-900 via-stone-950 to-black border-b border-stone-800 px-4 py-2 flex flex-wrap items-center justify-between gap-4 shrink-0 select-none shadow-[0_4px_12px_rgba(0,0,0,0.8)] z-30">
+  const isDark = theme === 'dark';
+  const currentViewportIndex = Math.max(0, VIEWPORT_MODES.indexOf(viewport));
 
-      {/* Viewport Gear Shaft Selector */}
-      <div className="flex items-center gap-3 bg-stone-900/80 p-1.5 rounded-xl border border-stone-800 shadow-inner">
+  return (
+    <div
+      className={`border-b px-4 py-2 flex flex-wrap items-center justify-between gap-4 shrink-0 select-none shadow-[0_4px_12px_rgba(0,0,0,0.3)] z-30 transition-colors ${
+        isDark
+          ? 'bg-gradient-to-b from-stone-900 via-stone-950 to-black border-stone-800'
+          : 'bg-gradient-to-b from-amber-200 via-amber-100 to-amber-200 border-amber-300/80 text-amber-950'
+      }`}
+    >
+
+      {/* Viewport Gear Selector */}
+      <div className={`flex items-center gap-3 p-1.5 rounded-xl border shadow-inner ${
+        isDark ? 'bg-stone-900/80 border-stone-800' : 'bg-amber-300/40 border-amber-400'
+      }`}>
         <div className="flex items-center gap-2 px-2">
-          <Monitor className="w-4 h-4 text-amber-400" />
-          <span className="text-[10px] font-mono font-bold text-amber-300 uppercase tracking-widest">
+          <Monitor className={`w-4 h-4 ${isDark ? 'text-amber-400' : 'text-amber-800'}`} />
+          <span className={`text-[10px] font-mono font-bold uppercase tracking-widest ${
+            isDark ? 'text-amber-300' : 'text-amber-900'
+          }`}>
             VIEWPORT GEAR
           </span>
         </div>
 
-        {/* Horizontal Gear Shift Tabs */}
-        <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-stone-800">
-          {[
-            { mode: 'desktop' as ViewportMode, label: 'DESK', icon: <Monitor className="w-3 h-3" /> },
-            { mode: 'tablet' as ViewportMode, label: 'TAB', icon: <Tablet className="w-3 h-3" /> },
-            { mode: 'mobile' as ViewportMode, label: 'MOB', icon: <Smartphone className="w-3 h-3" /> },
-          ].map((item) => {
-            const isActive = viewport === item.mode;
-            return (
-              <button
-                key={item.mode}
-                onClick={() => onViewportChange(item.mode)}
-                className={`px-3 py-1 font-mono text-[10px] font-bold uppercase rounded flex items-center gap-1.5 transition-all ${
-                  isActive
-                    ? 'bg-amber-400 text-stone-950 border border-amber-300 shadow-[0_0_8px_#fbbf24] scale-105'
-                    : 'bg-stone-900 text-stone-400 border border-stone-800 hover:text-stone-200'
-                }`}
-              >
-                {item.icon}
-                {item.label}
-              </button>
-            );
-          })}
+        {/* Horizontal Gear Transmission Shift Control */}
+        <div className="scale-90 -my-2">
+          <VerticalGearbox
+            label=""
+            orientation="horizontal"
+            positions={['DESK', 'TAB', 'MOB']}
+            currentPosition={currentViewportIndex}
+            variant={isDark ? 'dark-tactile' : 'machined-steel'}
+            onChange={(idx) => onViewportChange(VIEWPORT_MODES[idx])}
+          />
         </div>
       </div>
 
       {/* Center Canvas Grid Toggle Switch & Environment Backdrop Selector */}
-      <div className="flex items-center gap-4 bg-stone-900/80 p-1.5 rounded-xl border border-stone-800 shadow-inner">
+      <div className={`flex items-center gap-4 p-1.5 rounded-xl border shadow-inner ${
+        isDark ? 'bg-stone-900/80 border-stone-800' : 'bg-amber-300/40 border-amber-400'
+      }`}>
 
         {/* Grid Toggle Switch */}
         <div className="flex items-center scale-90 -my-1">
@@ -81,27 +97,27 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           />
         </div>
 
-        {/* Backdrop Selector */}
+        {/* Chained Dropdown Backdrop Selector */}
         {onBackdropChange && (
-          <div className="flex items-center gap-2 border-l border-stone-800 pl-3">
-            <Palette className="w-3.5 h-3.5 text-amber-400" />
-            <select
-              value={backdrop}
-              onChange={(e) => onBackdropChange(e.target.value as CanvasBackdrop)}
-              className="bg-stone-950 text-amber-300 font-mono text-xs px-2.5 py-1 rounded-lg border border-stone-700 focus:outline-none focus:border-amber-400 shadow-inner"
-            >
-              <option value="tech-grid">Tech Dark Grid</option>
-              <option value="grass-field">Grass XP Meadow</option>
-              <option value="brushed-workbench">Workbench Metal</option>
-              <option value="blueprint">Cyan Blueprint</option>
-              <option value="dark-slate">Dark Slate</option>
-            </select>
+          <div className={`flex items-center gap-2 border-l pl-3 ${isDark ? 'border-stone-800' : 'border-amber-400/80'}`}>
+            <Palette className={`w-3.5 h-3.5 ${isDark ? 'text-amber-400' : 'text-amber-800'}`} />
+            <div className="scale-90 origin-left -my-1">
+              <ChainedDropdown
+                value={backdrop}
+                onChange={(val) => onBackdropChange(val as CanvasBackdrop)}
+                options={BACKDROP_OPTIONS}
+                material={isDark ? 'gothic-dark' : 'brushed-steel'}
+                chainStyle="metal-chain"
+              />
+            </div>
           </div>
         )}
       </div>
 
       {/* Rotary Knob Zoom Control Dial */}
-      <div className="flex items-center gap-3 bg-stone-900/80 px-3 py-1 rounded-xl border border-stone-800 shadow-inner">
+      <div className={`flex items-center gap-3 px-3 py-1 rounded-xl border shadow-inner ${
+        isDark ? 'bg-stone-900/80 border-stone-800' : 'bg-amber-300/40 border-amber-400'
+      }`}>
         <div className="scale-75 -my-2">
           <RotaryKnob
             label="ZOOM"
@@ -120,13 +136,19 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </div>
 
         <div className="flex flex-col items-center">
-          <span className="font-mono text-xs font-bold text-amber-300 bg-black/80 px-2 py-0.5 rounded border border-amber-500/40 shadow-inner min-w-[50px] text-center">
+          <span className={`font-mono text-xs font-bold px-2 py-0.5 rounded border shadow-inner min-w-[50px] text-center ${
+            isDark
+              ? 'bg-black/80 text-amber-300 border-amber-500/40'
+              : 'bg-amber-50 text-amber-950 border-amber-400'
+          }`}>
             {Math.round(zoom * 100)}%
           </span>
           {zoom !== 1 && (
             <button
               onClick={onResetZoom}
-              className="text-[9px] font-mono text-amber-400/80 hover:text-amber-300 underline mt-0.5"
+              className={`text-[9px] font-mono underline mt-0.5 ${
+                isDark ? 'text-amber-400/80 hover:text-amber-300' : 'text-amber-800 hover:text-amber-950'
+              }`}
             >
               RESET
             </button>

@@ -21,6 +21,7 @@ export const App: React.FC = () => {
   const [zoom, setZoom] = useState(1);
   const [propsState, setPropsState] = useState<Record<string, any>>({});
 
+  const isDark = theme === 'dark';
   const activeComponent = COMPONENT_REGISTRY.find((item) => item.id === selectedId) || COMPONENT_REGISTRY[0];
 
   const handleSelectComponent = (id: string) => {
@@ -44,7 +45,9 @@ export const App: React.FC = () => {
   const ActiveComponentRenderer = activeComponent?.component;
 
   return (
-    <div className={`min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans ${theme}`}>
+    <div className={`min-h-screen flex flex-col font-sans transition-colors ${
+      isDark ? 'bg-slate-950 text-slate-100 dark' : 'bg-amber-50 text-amber-950 light'
+    }`}>
       <Header
         totalComponents={COMPONENT_REGISTRY.length}
         theme={theme}
@@ -62,6 +65,7 @@ export const App: React.FC = () => {
           onSearchChange={setSearchQuery}
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
+          theme={theme}
         />
 
         <MainContent>
@@ -78,6 +82,7 @@ export const App: React.FC = () => {
                   onResetZoom={() => setZoom(1)}
                   backdrop={backdrop}
                   onBackdropChange={setBackdrop}
+                  theme={theme}
                 />
                 {activeComponent && (
                   <Canvas viewport={viewport} showGrid={showGrid} zoom={zoom} backdrop={backdrop}>
@@ -91,17 +96,18 @@ export const App: React.FC = () => {
                   component={activeComponent}
                   propsState={propsState}
                   onPropChange={handlePropChange}
+                  theme={theme}
                 />
               )}
             </div>
           ) : (
-            <div className="p-8 overflow-y-auto flex-1">
+            <div className={`p-8 overflow-y-auto flex-1 ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-amber-100/50 text-amber-950'}`}>
               <div className="max-w-6xl mx-auto space-y-6">
                 <div>
-                  <h2 className="text-xl font-bold tracking-tight text-slate-100">
+                  <h2 className={`text-xl font-bold tracking-tight ${isDark ? 'text-slate-100' : 'text-amber-950'}`}>
                     Component Catalog Showcase
                   </h2>
-                  <p className="text-sm text-slate-400 mt-1">
+                  <p className={`text-sm mt-1 ${isDark ? 'text-slate-400' : 'text-amber-800'}`}>
                     Explore all presentational UI elements and ideas created in the sandbox.
                   </p>
                 </div>
