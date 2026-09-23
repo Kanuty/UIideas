@@ -5,3 +5,4 @@ export * from './ToggleSwitch';
 export * from './RetroPanel';
 export * from './VintageAudioConsole';
 export * from './CockpitControlPanel';
+export * from './SkeuomorphicMediaBar';

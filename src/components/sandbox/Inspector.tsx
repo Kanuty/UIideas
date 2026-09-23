@@ -26,15 +26,15 @@ export const Inspector: React.FC<InspectorProps> = ({
   };
 
   return (
-    <div className="w-72 border-l border-slate-800 bg-slate-900/60 flex flex-col h-[calc(100vh-3.5rem)] shrink-0">
-      <div className="p-3 border-b border-slate-800 flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
+    <div className="w-72 border-l border-stone-800 bg-stone-950/80 flex flex-col h-[calc(100vh-3.5rem)] shrink-0 select-none">
+      <div className="p-3 border-b border-stone-800/80 flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab('props')}
-            className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors flex items-center gap-1 ${
+            className={`px-3 py-1 font-mono text-xs font-bold uppercase rounded transition-all flex items-center gap-1.5 border ${
               activeTab === 'props'
-                ? 'bg-slate-800 text-indigo-400'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-amber-400 text-stone-950 border-amber-300 shadow-[0_2px_6px_rgba(251,191,36,0.4)]'
+                : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-stone-200'
             }`}
           >
             <Settings className="w-3.5 h-3.5" />
@@ -42,10 +42,10 @@ export const Inspector: React.FC<InspectorProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('code')}
-            className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors flex items-center gap-1 ${
+            className={`px-3 py-1 font-mono text-xs font-bold uppercase rounded transition-all flex items-center gap-1.5 border ${
               activeTab === 'code'
-                ? 'bg-slate-800 text-indigo-400'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-amber-400 text-stone-950 border-amber-300 shadow-[0_2px_6px_rgba(251,191,36,0.4)]'
+                : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-stone-200'
             }`}
           >
             <Code className="w-3.5 h-3.5" />
@@ -54,15 +54,15 @@ export const Inspector: React.FC<InspectorProps> = ({
         </div>
       </div>
 
-      <div className="p-4 border-b border-slate-800/80">
-        <h2 className="text-sm font-semibold text-slate-100">{component.name}</h2>
-        <p className="text-xs text-slate-400 mt-1">{component.description}</p>
-        <div className="flex flex-wrap gap-1 mt-2.5">
-          <Badge variant="primary" size="sm">
+      <div className="p-4 border-b border-stone-800/80 bg-stone-900/40">
+        <h2 className="text-sm font-mono font-bold text-amber-300 uppercase tracking-wide">{component.name}</h2>
+        <p className="text-xs text-stone-400 mt-1 leading-relaxed">{component.description}</p>
+        <div className="flex flex-wrap gap-1.5 mt-3">
+          <Badge variant="metal-plate" size="sm">
             {component.category}
           </Badge>
           {component.tags.map((tag) => (
-            <Badge key={tag} variant="default" size="sm">
+            <Badge key={tag} variant="screwed-tag" size="sm">
               #{tag}
             </Badge>
           ))}
@@ -73,17 +73,17 @@ export const Inspector: React.FC<InspectorProps> = ({
         {activeTab === 'props' ? (
           <div>
             {!component.propsSchema || component.propsSchema.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-slate-500 text-center">
-                <Info className="w-6 h-6 mb-2 opacity-60" />
-                <p className="text-xs">No interactive props configured for this component.</p>
+              <div className="flex flex-col items-center justify-center py-8 text-stone-500 text-center font-mono">
+                <Info className="w-6 h-6 mb-2 opacity-60 text-amber-400" />
+                <p className="text-xs">No interactive parameters defined for this control.</p>
               </div>
             ) : (
-              <div className="space-y-3.5">
+              <div className="space-y-4">
                 {component.propsSchema.map((prop) => (
                   <div key={prop.name} className="space-y-1">
-                    <label className="text-xs font-mono font-medium text-slate-300 flex items-center justify-between">
+                    <label className="text-xs font-mono font-bold text-amber-300/90 flex items-center justify-between">
                       <span>{prop.name}</span>
-                      <span className="text-[10px] text-slate-500 font-sans">{prop.type}</span>
+                      <span className="text-[10px] text-stone-500 font-mono lowercase">{prop.type}</span>
                     </label>
 
                     {prop.type === 'string' && (
@@ -91,7 +91,7 @@ export const Inspector: React.FC<InspectorProps> = ({
                         type="text"
                         value={propsState[prop.name] ?? prop.defaultValue}
                         onChange={(e) => onPropChange(prop.name, e.target.value)}
-                        className="w-full bg-slate-800 text-slate-200 text-xs px-2.5 py-1.5 rounded-md border border-slate-700/60 focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-stone-900 text-amber-200 font-mono text-xs px-2.5 py-1.5 rounded border border-stone-700 focus:outline-none focus:border-amber-400 shadow-inner"
                       />
                     )}
 
@@ -99,16 +99,16 @@ export const Inspector: React.FC<InspectorProps> = ({
                       <button
                         type="button"
                         onClick={() => onPropChange(prop.name, !propsState[prop.name])}
-                        className={`w-full text-left text-xs px-2.5 py-1.5 rounded-md border transition-colors flex items-center justify-between ${
+                        className={`w-full text-left font-mono text-xs px-2.5 py-1.5 rounded border transition-colors flex items-center justify-between ${
                           propsState[prop.name]
-                            ? 'bg-indigo-600/20 border-indigo-500/40 text-indigo-300 font-medium'
-                            : 'bg-slate-800 border-slate-700/60 text-slate-400'
+                            ? 'bg-amber-400/10 border-amber-500/50 text-amber-300 font-bold'
+                            : 'bg-stone-900 border-stone-700/80 text-stone-500'
                         }`}
                       >
-                        <span>{propsState[prop.name] ? 'True' : 'False'}</span>
+                        <span>{propsState[prop.name] ? 'ACTIVE' : 'INACTIVE'}</span>
                         <div
-                          className={`w-3.5 h-3.5 rounded-full ${
-                            propsState[prop.name] ? 'bg-indigo-500' : 'bg-slate-600'
+                          className={`w-3.5 h-3.5 rounded-full border border-stone-900 shadow-sm ${
+                            propsState[prop.name] ? 'bg-amber-400 shadow-[0_0_6px_#fbbf24]' : 'bg-stone-800'
                           }`}
                         />
                       </button>
@@ -118,7 +118,7 @@ export const Inspector: React.FC<InspectorProps> = ({
                       <select
                         value={propsState[prop.name] ?? prop.defaultValue}
                         onChange={(e) => onPropChange(prop.name, e.target.value)}
-                        className="w-full bg-slate-800 text-slate-200 text-xs px-2 py-1.5 rounded-md border border-slate-700/60 focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-stone-900 text-amber-200 font-mono text-xs px-2 py-1.5 rounded border border-stone-700 focus:outline-none focus:border-amber-400"
                       >
                         {prop.options.map((opt) => (
                           <option key={opt} value={opt}>
@@ -128,7 +128,7 @@ export const Inspector: React.FC<InspectorProps> = ({
                       </select>
                     )}
 
-                    <p className="text-[11px] text-slate-500">{prop.description}</p>
+                    <p className="text-[10px] text-stone-500">{prop.description}</p>
                   </div>
                 ))}
               </div>
@@ -138,12 +138,12 @@ export const Inspector: React.FC<InspectorProps> = ({
           <div className="relative">
             <button
               onClick={copyCode}
-              className="absolute top-2 right-2 p-1.5 text-slate-400 hover:text-white bg-slate-800 rounded-md border border-slate-700/60"
+              className="absolute top-2 right-2 p-1.5 text-stone-400 hover:text-white bg-stone-900 rounded border border-stone-700"
               title="Copy snippet"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
-            <pre className="bg-slate-950 p-3 rounded-lg border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+            <pre className="bg-stone-950 p-3 rounded-lg border border-stone-800 text-[11px] font-mono text-amber-300/90 overflow-x-auto whitespace-pre-wrap leading-relaxed">
               {component.codeSnippet || '// No code snippet available'}
             </pre>
           </div>

@@ -15,7 +15,8 @@ export const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
   const [viewport, setViewport] = useState<ViewportMode>('desktop');
-  const [showGrid, setShowGrid] = useState(true);
+  const [showGrid, setShowGrid] = useState(false);
+  const [backdrop, setBackdrop] = useState<'tech-grid' | 'grass-field' | 'brushed-workbench' | 'blueprint' | 'dark-slate'>('grass-field');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [zoom, setZoom] = useState(1);
   const [propsState, setPropsState] = useState<Record<string, any>>({});
@@ -75,9 +76,11 @@ export const App: React.FC = () => {
                   zoom={zoom}
                   onZoomChange={setZoom}
                   onResetZoom={() => setZoom(1)}
+                  backdrop={backdrop}
+                  onBackdropChange={setBackdrop}
                 />
                 {activeComponent && (
-                  <Canvas viewport={viewport} showGrid={showGrid} zoom={zoom}>
+                  <Canvas viewport={viewport} showGrid={showGrid} zoom={zoom} backdrop={backdrop}>
                     <ActiveComponentRenderer {...(activeComponent.defaultProps || {})} {...propsState} />
                   </Canvas>
                 )}

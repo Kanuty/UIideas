@@ -6,9 +6,23 @@ This documentation details all available custom physical UI components, their pr
 
 ---
 
-## 1. RetroPanel (`src/components/retro/RetroPanel.tsx`)
+## 1. SkeuomorphicMediaBar (`src/components/retro/SkeuomorphicMediaBar.tsx`)
 
-A physical 3D mounting panel container with irregular polygon silhouettes, chamfered bevels, structural rivets, and technical grid backdrops. Used as an extruded mounting plate to organize physical controls, switches, and displays.
+An early-2000s WinAMP / Frutiger Aero skeuomorphic metallic audio media bar. Features swooping silver curves, molded sunken button sockets, track seeking slider, volume bar, EQ preset cycler, and digital LCD track marquee.
+
+### Props API
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `trackTitle` | `string` | `'SYNTHWAVE_O3_ATMOSPHERE.MP3'` | Song or audio track file title string. |
+| `artistName` | `string` | `'ANALOG FREQUENCY LABS'` | Artist / composer name label. |
+| `durationSeconds` | `number` | `214` | Total audio track length in seconds. |
+
+---
+
+## 2. RetroPanel (`src/components/retro/RetroPanel.tsx`)
+
+A physical 3D mounting panel container supporting irregular polygon silhouettes, organic swooping curves, chamfered bevels, structural rivets, technical grid backdrops, and recessed molded sockets.
 
 ### Props API
 
@@ -16,19 +30,20 @@ A physical 3D mounting panel container with irregular polygon silhouettes, chamf
 |---|---|---|---|
 | `title` | `string` | `undefined` | Header title string displayed at the top of the panel plate. |
 | `panelId` | `string` | `undefined` | Technical ID tag string (e.g. `PNL-409`). |
-| `shape` | `'rectangle' \| 'cut-top-right' \| 'cut-top-left' \| 'cut-bottom-right' \| 'stepped-corner' \| 'hexagonal' \| 'notched-top'` | `'cut-top-right'` | Irregular polygon clip silhouette with thick uniform SVG 3D bevel borders. |
-| `variant` | `'dark-steel' \| 'military-green' \| 'vintage-bakelite' \| 'brushed-aluminum' \| 'cockpit-teal'` | `'dark-steel'` | Material finish and color theme. |
-| `showRivets` | `boolean` | `true` | Renders metal corner rivet bolts placed safely away from cut corners. |
+| `shape` | `'rectangle' \| 'cut-top-right' \| 'cut-top-left' \| 'cut-bottom-right' \| 'stepped-corner' \| 'hexagonal' \| 'notched-top' \| 'swoop-bottom-left' \| 'curved-notch' \| 'concave-inset' \| 'molded-pod' \| 'wave-top'` | `'cut-top-right'` | Polygon or bezier curve silhouette with thick non-scaling SVG 3D bevel borders. |
+| `variant` | `'dark-steel' \| 'military-green' \| 'vintage-bakelite' \| 'brushed-aluminum' \| 'cockpit-teal' \| 'silver-metallic'` | `'dark-steel'` | Material finish and color theme. |
+| `showRivets` | `boolean` | `true` | Renders metal corner rivet bolts placed safely away from cut/curved edges. |
 | `showGridPattern` | `boolean` | `true` | Displays subtle technical grid backdrop texture. |
 | `isTransparent` | `boolean` | `false` | Renders panel as a transparent glass visor window revealing underlying UI. |
 | `glassOpacity` | `number` | `0.15` | Alpha opacity for the glass panel background (e.g. 0.1 for 90% transparency). |
 | `windowLabel` | `string` | `undefined` | Badge banner tag shown on transparent glass window panels. |
 | `showGlassReflection` | `boolean` | `true` | Renders glass glint glare effect across window surface. |
+| `recessedSockets` | `boolean` | `false` | Hosts child controls inside molded sunken socket pods with inner drop shadow. |
 | `children` | `React.ReactNode` | `undefined` | UI controls or telemetry displays hosted inside the panel plate. |
 
 ---
 
-## 2. ToggleSwitch (`src/components/retro/ToggleSwitch.tsx`)
+## 3. ToggleSwitch (`src/components/retro/ToggleSwitch.tsx`)
 
 A heavy-duty military flip switch with mounting plate details, corner hex screws, status LED, ON/OFF labels, and an interactive protective safety cover.
 
@@ -50,15 +65,11 @@ A heavy-duty military flip switch with mounting plate details, corner hex screws
 | `onLabel` | `string` | `'ON'` | Top position label. |
 | `offLabel` | `string` | `'OFF'` | Bottom position label. |
 
-### Interactivity & Safety Physics
-- **Interactive Security Cover:** When `hasGuard={true}`, the red safety cover physically locks the switch. Clicking the switch while locked automatically flips open the cover with a 3D swing animation. When open, the lever toggles freely. Clicking the guard again closes and re-secures it.
-- **Vertical Axis Flip Motion:** Lever flips cleanly along the vertical Y-axis UP and DOWN with subtle depth translation and ball-tip movement.
-
 ---
 
-## 3. RotaryKnob (`src/components/retro/RotaryKnob.tsx`)
+## 4. RotaryKnob (`src/components/retro/RotaryKnob.tsx`)
 
-A tactile rotary dial with support for continuous values, discrete detent snapping, scale tick mark rendering, direct tick clicking, and smooth rotation animations.
+A tactile rotary dial with support for continuous values, discrete detent snapping, scale tick mark rendering, direct tick clicking, custom min/max rotation angle limits, and smooth rotation animations.
 
 ### Props API
 
@@ -84,31 +95,22 @@ A tactile rotary dial with support for continuous values, discrete detent snappi
 
 ---
 
-## 4. TactilePushButton (`src/components/retro/TactilePushButton.tsx`)
+## 5. TactilePushButton (`src/components/retro/TactilePushButton.tsx`)
 
 A physical 3D push-button inspired by vintage audio consoles, synth keys, and military command panels. Supports latching states, LED indicators, custom labels, and optional dot textures.
 
-### Props API
+---
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `label` | `string` | `undefined` | Top header label text. |
-| `sublabel` | `string` | `undefined` | Bottom subtitle label text. |
-| `active` | `boolean` | `undefined` | Controlled active/pressed state. |
-| `defaultActive` | `boolean` | `false` | Initial active state when uncontrolled. |
-| `onToggle` | `(active: boolean) => void` | `undefined` | Callback fired when button state changes. |
-| `variant` | `'cream' \| 'silver' \| 'wood' \| 'dark-slate' \| 'brass' \| 'military'` | `'cream'` | Visual aesthetic theme and finish. |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Physical dimension scale. |
-| `shape` | `'rectangular' \| 'square' \| 'pill'` | `'rectangular'` | Button outer bezel geometry. |
-| `isLatching` | `boolean` | `true` | If true, remains depressed when pressed. |
-| `ledColor` | `'none' \| 'red' \| 'green' \| 'amber' \| 'blue'` | `'red'` | Status light color indicator. |
-| `showDots` | `boolean` | `false` | Toggles dot grid background texture on button face. |
+## 6. DotMatrixDisplay (`src/components/retro/DotMatrixDisplay.tsx`)
+
+A customizable retro LED dot matrix display board capable of rendering scrolling or static uppercase text, digital status readouts, and vintage VFD displays.
 
 ---
 
-## 5. DotMatrixDisplay (`src/components/retro/DotMatrixDisplay.tsx`)
+## Environment Backdrops & Micro-Plate Badges
 
-A customizable retro LED dot matrix display board capable of rendering scrolling or static uppercase text, digital status readouts, and vintage VFD displays.
+- **Canvas Backdrops:** The sandbox environment toolbar includes a backdrop menu supporting `Grass XP Meadow`, `Tech Dark Grid`, `Workbench Metal`, `Cyan Blueprint`, and `Dark Slate`.
+- **Physical Micro-Plate Badges:** Tags, hashtags, and category chips are styled as physical analog micro-plates (embossed Dymo tape labels, screwed metal plates, and stamped badges).
 
 ---
 
