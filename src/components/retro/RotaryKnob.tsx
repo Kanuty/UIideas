@@ -20,6 +20,8 @@ export interface RotaryKnobProps {
   showScale?: boolean;
   scaleLabels?: string[];
   detents?: number;
+  minAngle?: number;
+  maxAngle?: number;
 }
 
 export const RotaryKnob: React.FC<RotaryKnobProps> = ({
@@ -38,6 +40,8 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
   showScale = true,
   scaleLabels,
   detents,
+  minAngle = -135,
+  maxAngle = 135,
 }) => {
   const [internalValue, setInternalValue] = useState(defaultValue);
   const isControlled = controlledValue !== undefined;
@@ -47,8 +51,10 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
   const isDragging = useRef(false);
   const startPos = useRef<{ x: number; y: number; val: number }>({ x: 0, y: 0, val: value });
 
-  const percentage = (value - min) / (max - min);
-  const rotationAngle = -135 + percentage * 270;
+  const clampedVal = Math.min(max, Math.max(min, value));
+  const percentage = (max === min) ? 0 : (clampedVal - min) / (max - min);
+  const sweepAngle = maxAngle - minAngle;
+  const rotationAngle = minAngle + percentage * sweepAngle;
 
   const updateValue = (newValue: number) => {
     let clamped = Math.min(max, Math.max(min, newValue));
@@ -79,11 +85,26 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
     const dx = e.clientX - centerX;
     const dy = e.clientY - centerY;
 
-    let angle = (Math.atan2(dy, dx) * 180) / Math.PI + 90; // 0 deg is top
-    if (angle > 180) angle -= 360;
+    // Angle relative to top (12 o'clock = 0 deg, clockwise positive)
+    let deg = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
 
-    let clampedAngle = Math.min(135, Math.max(-135, angle));
-    const norm = (clampedAngle + 135) / 270;
+    // Normalize angle into range [minAngle, minAngle + 360)
+    while (deg < minAngle) deg += 360;
+    while (deg >= minAngle + 360) deg -= 360;
+
+    const sweep = maxAngle - minAngle;
+    const deadZoneMidpoint = maxAngle + (360 - sweep) / 2;
+
+    let clampedAngle: number;
+    if (deg <= maxAngle) {
+      clampedAngle = deg;
+    } else if (deg <= deadZoneMidpoint) {
+      clampedAngle = maxAngle;
+    } else {
+      clampedAngle = minAngle;
+    }
+
+    const norm = sweep === 0 ? 0 : (clampedAngle - minAngle) / sweep;
     return min + norm * (max - min);
   };
 
@@ -196,7 +217,7 @@ export const RotaryKnob: React.FC<RotaryKnobProps> = ({
         {showScale && (
           <div className="absolute inset-0 rounded-full flex items-center justify-center pointer-events-none z-20">
             {Array.from({ length: totalTicks }).map((_, i) => {
-              const angle = -135 + (i / (totalTicks - 1)) * 270;
+              const angle = minAngle + (i / (totalTicks - 1)) * (maxAngle - minAngle);
               const isMajor = i === 0 || i === totalTicks - 1 || i % Math.max(1, Math.floor(totalTicks / 4)) === 0;
               const customLabel = scaleLabels && scaleLabels[i];
 

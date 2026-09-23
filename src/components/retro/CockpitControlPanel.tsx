@@ -41,18 +41,30 @@ export const CockpitControlPanel: React.FC<CockpitControlPanelProps> = ({
           <span className="text-[10px] font-mono text-stone-500">SYSTEM READY - CLICK SAFETY COVER TO UNLOCK</span>
         </div>
 
-        {/* Matrix Radar Telemetry Display */}
-        <div className="mb-6">
-          <DotMatrixDisplay
-            color="vfd-blue"
-            fontSize="xs"
-            scrollSpeed={0.8}
-            lines={[
-              { text: `STROBE: ${strobePower ? 'ACTIVE [30Hz]' : 'STANDBY'}`, highlight: true },
-              { text: `GAIN TRANSMIT: ${gainT.toFixed(1)} dB   RECEIVE: ${gainR.toFixed(1)} dB` },
-              { text: 'TELEMETRY: ALL SYSTEMS NOMINAL - READY FOR RELEASE' },
-            ]}
-          />
+        {/* Matrix Radar Telemetry Display Hosted Inside Transparent Glass Window Panel */}
+        <div className="mb-6 relative">
+          <RetroPanel
+            shape="notched-top"
+            variant="cockpit-teal"
+            isTransparent={true}
+            glassOpacity={0.12}
+            windowLabel="PRIMARY HUD VISOR WINDOW (90% TRANSPARENT)"
+            className="w-full"
+            showRivets={true}
+          >
+            <div className="w-full pt-1">
+              <DotMatrixDisplay
+                color="vfd-blue"
+                fontSize="xs"
+                scrollSpeed={0.8}
+                lines={[
+                  { text: `STROBE: ${strobePower ? 'ACTIVE [30Hz]' : 'STANDBY'}`, highlight: true },
+                  { text: `GAIN TRANSMIT: ${gainT.toFixed(1)} dB   RECEIVE: ${gainR.toFixed(1)} dB` },
+                  { text: 'TELEMETRY: ALL SYSTEMS NOMINAL - READY FOR RELEASE' },
+                ]}
+              />
+            </div>
+          </RetroPanel>
         </div>
 
         {/* Interlocking 3D Irregular Retro Panels Layout */}
@@ -148,6 +160,8 @@ export const CockpitControlPanel: React.FC<CockpitControlPanelProps> = ({
                 style="cockpit"
                 variant="dark-bakelite"
                 detents={6}
+                minAngle={-90}
+                maxAngle={90}
                 scaleLabels={['0', '1', '2', '3', '4', '5']}
               />
 

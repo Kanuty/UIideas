@@ -24,6 +24,9 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
       variant: 'dark-steel',
       showRivets: true,
       showGridPattern: true,
+      isTransparent: false,
+      glassOpacity: 0.15,
+      windowLabel: '',
     },
     propsSchema: [
       {
@@ -64,6 +67,18 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
         defaultValue: true,
         description: 'Display background grid pattern',
       },
+      {
+        name: 'isTransparent',
+        type: 'boolean',
+        defaultValue: false,
+        description: 'Render panel as transparent glass window',
+      },
+      {
+        name: 'windowLabel',
+        type: 'string',
+        defaultValue: '',
+        description: 'Glass window badge label banner',
+      },
     ],
     codeSnippet: `<RetroPanel title="RADAR AVIONICS PLATE" panelId="PNL-409" shape="cut-top-right" variant="dark-steel">
   <ToggleSwitch label="POWER" hasGuard={true} />
@@ -78,6 +93,9 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
         variant: props.variant || 'dark-steel',
         showRivets: props.showRivets !== undefined ? props.showRivets : true,
         showGridPattern: props.showGridPattern !== undefined ? props.showGridPattern : true,
+        isTransparent: props.isTransparent !== undefined ? props.isTransparent : false,
+        glassOpacity: props.glassOpacity !== undefined ? props.glassOpacity : 0.15,
+        windowLabel: props.windowLabel || '',
       },
       React.createElement(
         'div',
@@ -292,6 +310,18 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
         defaultValue: true,
         description: 'Display dial tick marks scale around knob',
       },
+      {
+        name: 'minAngle',
+        type: 'number',
+        defaultValue: -135,
+        description: 'Starting rotation angle in degrees for min value',
+      },
+      {
+        name: 'maxAngle',
+        type: 'number',
+        defaultValue: 135,
+        description: 'Ending rotation angle in degrees for max value',
+      },
     ],
     codeSnippet: `<RotaryKnob label="VOLUME" size="md" style="ribbed" variant="amber-gold" min={0} max={100} defaultValue={65} unit="%" />`,
     component: (props: any) => React.createElement(
@@ -307,6 +337,8 @@ export const COMPONENT_REGISTRY: UIComponentItem[] = [
         unit: '%',
         showValue: props.showValue !== undefined ? props.showValue : true,
         showScale: props.showScale !== undefined ? props.showScale : true,
+        minAngle: props.minAngle !== undefined ? props.minAngle : -135,
+        maxAngle: props.maxAngle !== undefined ? props.maxAngle : 135,
       }
     ),
   },
